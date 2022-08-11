@@ -1,0 +1,2 @@
+# White Cards App
+ This app was developed by me alone in Unity. It is a index cards app. My goal was to create a very simple user interface so that you can start learning quickly. I also wanted a modern look so that you feel comfortable while learning. The app is smart and helps you learn. The app shows you cards you don't know yet more often than others. In 3 words this app is: Smart, Simple, and Clean.
