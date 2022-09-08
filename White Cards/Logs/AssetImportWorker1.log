@@ -1400,3 +1400,99 @@ AssetImportParameters requested are different than current active one (requested
   custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
   custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
   custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+========================================================================
+Received Import Request.
+  Time since last request: 109381.863674 seconds.
+  path: Assets/Sprites/32Schatten.png
+  artifactKey: Guid(e5fafcb34c429a149b47126400b10d13) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Sprites/32Schatten.png using Guid(e5fafcb34c429a149b47126400b10d13) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'e5aa0f2beb6d146347f2a8fe52fea700') in 0.293263 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 97.173284 seconds.
+  path: Assets/Dark UI/Free/32 Light.png
+  artifactKey: Guid(a689281f545979940b5cedad12ec31a8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Dark UI/Free/32 Light.png using Guid(a689281f545979940b5cedad12ec31a8) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'f8736d112c021ee2b965538fd49a6600') in 0.073824 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.000045 seconds.
+  path: Assets/Dark UI/Free/64.png
+  artifactKey: Guid(701e7ed4dde1bf949b30e33741547ac9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Dark UI/Free/64.png using Guid(701e7ed4dde1bf949b30e33741547ac9) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '21a3740e79c5f446b48c077d23a9e44d') in 0.051607 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.000029 seconds.
+  path: Assets/Dark UI/Free/128.png
+  artifactKey: Guid(87ea2079a91b3e74f84b5cb700abb4d6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Dark UI/Free/128.png using Guid(87ea2079a91b3e74f84b5cb700abb4d6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '05044cb91bf43693557afdf91fc23ae2') in 0.060327 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.000036 seconds.
+  path: Assets/Dark UI/Free/32 Light 2.png
+  artifactKey: Guid(9c22439f7b2eadb41b70e5385d667660) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Dark UI/Free/32 Light 2.png using Guid(9c22439f7b2eadb41b70e5385d667660) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '2c2abf5ed9cab8c00ad78b19f197ad0e') in 0.049538 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 1.355735 seconds.
+  path: Assets/Dark UI/Free/128 Light 2.png
+  artifactKey: Guid(4c5a0d6878b96be4f9f82216b59eca51) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Dark UI/Free/128 Light 2.png using Guid(4c5a0d6878b96be4f9f82216b59eca51) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '97b760b3a34cc8e85fd01ea226acc8cb') in 0.049075 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.086872 seconds.
+  path: Assets/Dark UI/Free/Add Icon.png
+  artifactKey: Guid(25534d7e0c9de5646aee54d576a28388) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Dark UI/Free/Add Icon.png using Guid(25534d7e0c9de5646aee54d576a28388) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'ede6a13a9161fcc9dce4b7dd3b7302b1') in 0.029943 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.412493 seconds.
+  path: Assets/Dark UI/Free/B.png
+  artifactKey: Guid(0800cc9d4da0323489f4d25c65194aa5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Dark UI/Free/B.png using Guid(0800cc9d4da0323489f4d25c65194aa5) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '64ee7e0493a0f105502a6e231e79ebcd') in 0.041615 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.047118 seconds.
+  path: Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Bangers SDF.asset
+  artifactKey: Guid(125cb55b44b24c4393181402bc6200e6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/TextMesh Pro/Examples & Extras/Resources/Fonts & Materials/Bangers SDF.asset using Guid(125cb55b44b24c4393181402bc6200e6) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '9540edf10f906baef6e69814841cc74d') in 0.402897 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.000048 seconds.
+  path: Assets/UI pack/Button/Blue gradient.png
+  artifactKey: Guid(60cfd84ae231a4943b3f0f6cf0dcf409) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/UI pack/Button/Blue gradient.png using Guid(60cfd84ae231a4943b3f0f6cf0dcf409) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'a5b7f9d23f8725432584c6234f78e794') in 0.042514 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.000079 seconds.
+  path: Assets/Dark UI/Free/Bell.png
+  artifactKey: Guid(f004d321f2825c44d929e3d0f5844b8c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Dark UI/Free/Bell.png using Guid(f004d321f2825c44d929e3d0f5844b8c) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'addf7eb464a96b7e5585f1d1735c3c49') in 0.034349 seconds 
+========================================================================
+Received Import Request.
+  Time since last request: 0.037653 seconds.
+  path: Assets/Clean Vector Icons/Update/bonus_02.png
+  artifactKey: Guid(7c164a8ab621d5b4cbfdafbb24034032) Importer(815301076,1909f56bfc062723c751e8b465ee728b)
+Start importing Assets/Clean Vector Icons/Update/bonus_02.png using Guid(7c164a8ab621d5b4cbfdafbb24034032) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: '18bb8fff1a7d1316a1bfbb1e761a0007') in 0.040097 seconds 
+========================================================================
+Received Prepare
+Refreshing native plugins compatible for Editor in 6.45 ms, found 2 plugins.
+Preloading 0 native plugins for Editor in 0.00 ms.
+Unloading 23 Unused Serialized files (Serialized files now loaded: 0)
+Unloading 24 unused Assets / (0.7 MB). Loaded Objects now: 4229.
+Memory consumption went from 91.2 MB to 90.5 MB.
+Total: 7.971400 ms (FindLiveObjects: 0.568100 ms CreateObjectMapping: 0.235800 ms MarkObjects: 6.759700 ms  DeleteObjects: 0.406300 ms)
+
+AssetImportParameters requested are different than current active one (requested -> active):
+  custom:video-decoder-ogg-theora: a1e56fd34408186e4bbccfd4996cb3dc -> 
+  custom:container-muxer-webm: aa71ff27fc2769a1b78a27578f13a17b -> 
+  custom:container-demuxer-webm: 4f35f7cbe854078d1ac9338744f61a02 -> 
+  custom:video-encoder-webm-vp8: eb34c28f22e8b96e1ab97ce403110664 -> 
+  custom:video-codec-MediaFoundation-h265: 746d11721c4dcdbdad8f713fa42b33f4 -> 
+  custom:audio-encoder-webm-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+  custom:framework-win-MediaFoundation: 216162199b28c13a410421893ffa2e32 -> 
+  custom:container-demuxer-ogg: 62fdf1f143b41e24485cea50d1cbac27 -> 
+  custom:video-decoder-webm-vp8: 9c59270c3fd7afecdb556c50c9e8de78 -> 
+  custom:audio-decoder-ogg-vorbis: bf7c407c2cedff20999df2af8eb42d56 -> 
+Editor requested this worker to shutdown with reason: Scaling down because of idle timeout
+AssetImportWorker is now disconnected from the server
+Process exiting
+Exiting without the bug reporter. Application will terminate with return code 0
