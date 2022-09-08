@@ -70,6 +70,10 @@ public class CardManager : MonoBehaviour
         cardUIManager.ShowCard(currentCard);
     }
 
+    public void UpdateCurrentCardUI(){
+        cardUIManager.ShowCard(currentCard);
+    }
+
     private Card GetRandomCardFromList(List<Card> cards)
     {
         if(cards.Count <= 0)
@@ -146,6 +150,14 @@ public class CardManager : MonoBehaviour
     public List<Category> GetAllCategories()
     {
         return categories;
+    }
+
+    public Card GetCurrentCard(){
+        return currentCard;
+    }
+
+    public Category GetCurrentCategory(){
+        return currentCategory;
     }
 
     public void SaveCategory(Category newCategory)

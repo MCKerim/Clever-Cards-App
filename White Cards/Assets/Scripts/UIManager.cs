@@ -8,6 +8,7 @@ public class UIManager : MonoBehaviour
     [SerializeField] private GameObject gameUI;
     [SerializeField] private GameObject addCardUI;
     [SerializeField] private GameObject categorysUI;
+    [SerializeField] private GameObject editCardUI;
 
     // Start is called before the first frame update
     void Start()
@@ -23,6 +24,16 @@ public class UIManager : MonoBehaviour
     public void HideAddCardUI()
     {
         addCardUI.SetActive(false);
+    }
+
+    public void ShowEditCardUI()
+    {
+        editCardUI.SetActive(true);
+    }
+
+    public void HideEditCardUI()
+    {
+        editCardUI.SetActive(false);
     }
 
     public void ShowGameUI()
