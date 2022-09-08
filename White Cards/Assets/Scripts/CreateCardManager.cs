@@ -33,7 +33,7 @@ public class CreateCardManager : MonoBehaviour
 
     public void CreateCard()
     {
-        if (questionInputField.text == "" || answearInputField.text == "")
+        if (questionInputField.text == "" || answearInputField.text == "" || categories.Count == 0)
         {
             return;
         }
