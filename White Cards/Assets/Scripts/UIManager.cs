@@ -45,12 +45,12 @@ public class UIManager : MonoBehaviour
         mainMenu.SetActive(false);
     }
 
-    public void ShowCategorysUI()
+    public void ShowCategoriesUI()
     {
         categorysUI.SetActive(true);
     }
 
-    public void HideCategorysUI()
+    public void HideCategoriesUI()
     {
         categorysUI.SetActive(false);
     }

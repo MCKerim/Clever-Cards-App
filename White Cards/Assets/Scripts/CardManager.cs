@@ -7,7 +7,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 
 public class CardManager : MonoBehaviour
 {
-    [SerializeField] private List<Card> allCards;
     private Card currentCard;
     private Category currentCategory;
 
@@ -22,51 +21,18 @@ public class CardManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        categories = new List<Category>();
-        allCards = new List<Card>();
-
-        Data data = LoadData();
-        if(data != null)
-        {
-            allCards.AddRange(data.allCards);
-            categories.AddRange(data.categories);
-        }
-        else
-        {
-            CreateTestCategories(3);
-            CreateTestCards(5);
-            SaveData();
-        }
-
-        foreach (Card c in allCards)
-        {
-            Debug.Log("All Cards: " + c.Question);
-        }
+        categories = LoadCategoriesFromFile();
     }
 
     public void SelectCategory(Category category)
     {
-        uIManager.HideCategorysUI();
+        uIManager.HideCategoriesUI();
         uIManager.ShowGameUI();
 
         currentCategory = category;
-        currentCardSet = GetCardSetForCategory(currentCategory);
+        currentCardSet = LoadCardsOfCategoryFromFile(currentCategory);
 
         ShowNextCard();
-    }
-
-    private List<Card> GetCardSetForCategory(Category category)
-    {
-        List<Card> cards = new List<Card>();
-
-        foreach(Card c in allCards)
-        {
-            if (c.CategoryUuid.Equals(category.Uuid))
-            {
-                cards.Add(c);
-            }
-        }
-        return cards;
     }
 
     public void RateCard(int addPoints)
@@ -138,46 +104,33 @@ public class CardManager : MonoBehaviour
         return sum;
     } 
 
-    public void SafeCard(Card newCard)
+    public void SaveCard(Card card, Category category)
     {
-        allCards.Add(newCard);
+        List<Card> cardsOfCategory =  LoadCardsOfCategoryFromFile(category);
+        cardsOfCategory.Add(card);
+        SaveCardsOfCategory(cardsOfCategory, category);
     }
 
     public void DeleteCurrentCard()
     {
-        DeleteCard(currentCard);
+        currentCardSet.Remove(currentCard);
         ShowNextCard();
     }
 
-    public void DeleteCard(Card card)
+    /*public void DeleteCard(Card card, Category category)
     {
-        currentCardSet.Remove(currentCard);
-        allCards.Remove(card);
-    }
+        List<Card> cardsOfCategory =  LoadCardsOfCategoryFromFile(category);
+        cardsOfCategory.Remove(card);
+        SaveCardsOfCategory(cardsOfCategory, category);
+    }*/
 
     public void CreateTestCards(int amount)
     {
         for(int i=0; i < amount; i++)
         {
             Guid uuid = Guid.NewGuid();
-            SafeCard(new Card(uuid, "Question " + i, "Answear " + i, null, null, 50, categories[0].Uuid));
+            SaveCard(new Card(uuid, "Question " + i, "Answear " + i, null, null, 50, categories[0].Uuid), categories[0]);
         }
-    }
-
-    public void SafeCategory(Category newCategory)
-    {
-        categories.Add(newCategory);
-    }
-
-    public void DeleteCategory(Category category)
-    {
-        allCards.RemoveAll(c => c.CategoryUuid.Equals(category.Uuid));
-        categories.Remove(category);
-    }
-
-    public List<Category> GetAllCategories()
-    {
-        return categories;
     }
 
     public void CreateTestCategories(int amount)
@@ -185,28 +138,60 @@ public class CardManager : MonoBehaviour
         for (int i = 0; i < amount; i++)
         {
             Guid uuid = Guid.NewGuid();
-            SafeCategory(new Category(uuid, "Category " + i));
+            Category testCategory = new Category(uuid, "Category " + i);
+            SaveCategory(testCategory);
         }
     }
 
+    public List<Category> GetAllCategories()
+    {
+        return categories;
+    }
 
+    public void SaveCategory(Category newCategory)
+    {
+        categories.Add(newCategory);
+        SaveCategories();
+    }
+
+    public void DeleteCategory(Category category)
+    {
+        categories.Remove(category);
+        //Delete cards file for that category
+        try
+        {
+            string path = Application.persistentDataPath + "/" + category.Uuid + ".MCKerimData";
+            File.Delete(path);
+        }
+        catch (Exception ex)
+        {
+            Debug.LogException(ex);
+        }
+        SaveCategories();
+    }
 
     private void OnApplicationQuit()
     {
-        SaveData();
+        SaveCurrentCardSet();
     }
 
     private void OnApplicationPause(bool pause)
     {
         if (pause)
         {
-            SaveData();
+            SaveCurrentCardSet();
         }
     }
 
-    private void SaveData()
+    public void SaveCurrentCardSet(){
+        if(currentCardSet != null){
+            SaveCardsOfCategory(currentCardSet, currentCategory);
+        }
+    }
+
+    /*private void SaveData()
     {
-        Debug.Log("Try to save..");
+        Debug.Log("Try to Save..");
         BinaryFormatter formatter = new BinaryFormatter();
         string path = Application.persistentDataPath + "/whiteCardsData.MCKerimData";
         FileStream stream = new FileStream(path, FileMode.Create);
@@ -221,38 +206,98 @@ public class CardManager : MonoBehaviour
         {
             Debug.Log("All Cards: " + c.Question);
         }
+    }*/
+
+    private void SaveCategories(){
+        Debug.Log("Try to save Categories..");
+        BinaryFormatter formatter = new BinaryFormatter();
+
+        string path = Application.persistentDataPath + "/categories.MCKerimData";
+        FileStream stream = new FileStream(path, FileMode.Create);
+
+        CategoriesData categoriesData = new CategoriesData(categories);
+
+        formatter.Serialize(stream, categoriesData);
+        stream.Close();
+        Debug.Log("Categories Saved in: " + path);
     }
 
-    public Data LoadData()
+    private void SaveCardsOfCategory(List<Card> cards, Category category){
+        Debug.Log("Try to save Cards of a Category..");
+        BinaryFormatter formatter = new BinaryFormatter();
+
+        string path = Application.persistentDataPath + "/" + category.Uuid + ".MCKerimData";
+        FileStream stream = new FileStream(path, FileMode.Create);
+
+        CardsFromCategoryData cardsFromCategoryData = new CardsFromCategoryData(cards);
+
+        formatter.Serialize(stream, cardsFromCategoryData);
+        stream.Close();
+        Debug.Log("Cards Saved in: " + path);
+    }
+
+    public List<Category> LoadCategoriesFromFile()
     {
-        string path = Application.persistentDataPath + "/whiteCardsData.MCKerimData";
+        string path = Application.persistentDataPath + "/categories.MCKerimData";
         if (File.Exists(path))
         {
             BinaryFormatter formatter = new BinaryFormatter();
             FileStream stream = new FileStream(path, FileMode.Open);
 
-            Data data = formatter.Deserialize(stream) as Data;
+            CategoriesData categoriesData = formatter.Deserialize(stream) as CategoriesData;
+
             stream.Close();
             Debug.Log("Save File Found in: " + path);
-            return data;
+            return categoriesData.categories;
         }
         else
         {
             Debug.Log("Save File not found in " + path);
-            return null;
+            List<Category> categories = new List<Category>();
+            return categories;
+        }
+    }
+
+    private List<Card> LoadCardsOfCategoryFromFile(Category category)
+    {
+        string path = Application.persistentDataPath + "/" + category.Uuid + ".MCKerimData";
+        if (File.Exists(path))
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            FileStream stream = new FileStream(path, FileMode.Open);
+
+            CardsFromCategoryData cardsFromCategoryData = formatter.Deserialize(stream) as CardsFromCategoryData;
+
+            stream.Close();
+            Debug.Log("Save File Found in: " + path);
+            return cardsFromCategoryData.cards;
+        }
+        else
+        {
+            Debug.Log("Save File not found in " + path);
+            List<Card> cards = new List<Card>();
+            return cards;
         }
     }
 }
 
 [System.Serializable]
-public class Data
+public class CategoriesData
 {
-    public List<Card> allCards;
     public List<Category> categories;
 
-    public Data(List<Card> allCards, List<Category> categories)
+    public CategoriesData(List<Category> categories)
     {
-        this.allCards = allCards;
         this.categories = categories;
+    }
+}
+
+[System.Serializable]
+public class CardsFromCategoryData
+{
+    public List<Card> cards;
+
+    public CardsFromCategoryData(List<Card> cards){
+        this.cards = cards;
     }
 }

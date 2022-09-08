@@ -47,7 +47,7 @@ public class CreateCardManager : MonoBehaviour
         Guid categoryUuid = categories[categoryDropdownValue].Uuid;
 
         Card card = new Card(uuid, question, answear, currentImageAsBytesQuestion, currentImageAsBytesAnswear, startpointsForCard, categoryUuid);
-        cardManager.SafeCard(card);
+        cardManager.SaveCard(card, categories[categoryDropdownValue]);
 
         currentImageAsBytesQuestion = null;
         currentImageAsBytesAnswear = null;
@@ -70,7 +70,7 @@ public class CreateCardManager : MonoBehaviour
         createCategoryInputField.text = "";
 
         Category category = new Category(uuid, name);
-        cardManager.SafeCategory(category);
+        cardManager.SaveCategory(category);
 
         createCategoryPanel.SetActive(false);
 
@@ -95,6 +95,11 @@ public class CreateCardManager : MonoBehaviour
         float spaceBetween = 100;
         RectTransform rt = dropdownContentTransform.GetComponent<RectTransform>();
         rt.sizeDelta = new Vector2(rt.sizeDelta.x, (categories.Count-1) * spaceBetween);
+
+        //Can happen when last category was deleted
+        if(categoryDropdown.value > categoryDropdown.options.Count-1){
+            categoryDropdown.value = categoryDropdown.options.Count-1;
+        }
     }
 
     public void SelectImageQuestion()
