@@ -57,6 +57,16 @@ public class CardManager : MonoBehaviour
         ShowNextCard();
     }
 
+    public void StartEditingCurrentCard()
+    {
+        if(currentCard == null)
+        {
+            return;
+        }
+        uIManager.HideGameUI();
+        uIManager.ShowEditCardUI();
+    }
+
     public void ShowNextCard()
     {
         Card newCard = GetRandomCardFromListBasedOfChance(currentCardSet);
@@ -117,6 +127,11 @@ public class CardManager : MonoBehaviour
 
     public void DeleteCurrentCard()
     {
+        if(currentCard == null)
+        {
+            return;
+        }
+
         currentCardSet.Remove(currentCard);
         ShowNextCard();
     }
