@@ -10,10 +10,12 @@ public class CategoryButtonManager : MonoBehaviour
     private Category category;
 
     private CardManager cardManager;
+    private EditCategoryManager editCategoryManager;
 
     private void Start()
     {
         cardManager = GameObject.FindObjectOfType<CardManager>();
+        editCategoryManager = GameObject.FindObjectOfType<EditCategoryManager>();
     }
 
     public void SetCategory(Category category)
@@ -31,5 +33,10 @@ public class CategoryButtonManager : MonoBehaviour
     {
         cardManager.DeleteCategory(category);
         GameObject.FindObjectOfType<CategoryUIManager>().UpdateCategoryUI();
+    }
+
+    public void EditThisCategory()
+    {
+        editCategoryManager.StartEditingCategory(category);
     }
 }

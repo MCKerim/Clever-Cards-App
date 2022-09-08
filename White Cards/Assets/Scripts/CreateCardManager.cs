@@ -65,17 +65,22 @@ public class CreateCardManager : MonoBehaviour
 
     public void CreateCategory()
     {
-        Guid uuid = Guid.NewGuid();
         string name = createCategoryInputField.text;
+        if(name == ""){
+            return;
+        }
+
+        Guid uuid = Guid.NewGuid();
+
         createCategoryInputField.text = "";
 
         Category category = new Category(uuid, name);
         cardManager.SaveCategory(category);
 
-        createCategoryPanel.SetActive(false);
-
         UpdateCategoryDropdown();
         categoryDropdown.value = categoryDropdown.options.Count-1;
+
+        HideCreateCategoryPanel();
     }
 
     private void UpdateCategoryDropdown()
@@ -146,6 +151,16 @@ public class CreateCardManager : MonoBehaviour
         }, fileTypes);
 
         Debug.Log("Permission result: " + permission);
+    }
+
+    public void DeleteImageQuestion()
+    {
+        currentImageAsBytesQuestion = null;
+    }
+
+    public void DeleteImageAnswear()
+    {
+        currentImageAsBytesAnswear = null;
     }
 
     public void ReplaceRichTextStyleInQuestion(string inputText)

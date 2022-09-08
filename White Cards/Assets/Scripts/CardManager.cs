@@ -235,7 +235,7 @@ public class CardManager : MonoBehaviour
         }
     }*/
 
-    private void SaveCategories(){
+    public void SaveCategories(){
         Debug.Log("Try to save Categories..");
         BinaryFormatter formatter = new BinaryFormatter();
 
