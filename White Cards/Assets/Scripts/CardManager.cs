@@ -4,6 +4,7 @@ using UnityEngine;
 using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
+using TMPro;
 
 public class CardManager : MonoBehaviour
 {
@@ -18,10 +19,14 @@ public class CardManager : MonoBehaviour
 
     [SerializeField] private UIManager uIManager;
 
+    [SerializeField] private TextMeshProUGUI currentGameModeText;
+    private GameMode currentGameMode;
+
     // Start is called before the first frame update
     void Start()
     {
         categories = LoadCategoriesFromFile();
+        SelectGameMode(GameMode.Smart);
     }
 
     public void SelectCategory(Category category)
@@ -32,6 +37,7 @@ public class CardManager : MonoBehaviour
         currentCategory = category;
         currentCardSet = LoadCardsOfCategoryFromFile(currentCategory);
 
+        counterForInOrderMode = 0;
         ShowNextCard();
     }
 
@@ -67,21 +73,75 @@ public class CardManager : MonoBehaviour
         uIManager.ShowEditCardUI();
     }
 
-    public void ShowNextCard()
+    public void NextGameMode()
     {
-        Card newCard = GetRandomCardFromListBasedOfChance(currentCardSet);
+        GameMode[] gameModes = (GameMode[])Enum.GetValues(typeof(GameMode));
 
-        while (currentCardSet.Count >= 2 && newCard.Equals(currentCard))
-        {
-            newCard = GetRandomCardFromListBasedOfChance(currentCardSet);
+        int currentEnumValue = (int) currentGameMode;
+        currentEnumValue++;
+        if(currentEnumValue >= gameModes.Length){
+            currentEnumValue = 0;
         }
 
-        currentCard = newCard;
+        SelectGameMode((GameMode) currentEnumValue);
+    }
+
+    private void SelectGameMode(GameMode gameMode)
+    {
+        currentGameMode = gameMode;
+        currentGameModeText.SetText(currentGameMode + " Mode");
+    }
+
+    public void ShowNextCard()
+    {
+        switch(currentGameMode){
+            case GameMode.Smart:
+                currentCard = GetNextCardSmartMode();
+            break;
+            
+            case GameMode.Random:
+                currentCard = GetNextCardRandomMode();
+            break;
+
+            case GameMode.InOrder:
+                currentCard = GetNextCardInOrderMode();
+            break;
+
+            default:
+                Debug.LogError("Game Mode not implemented.");
+            break;
+        }
         cardUIManager.ShowCard(currentCard);
     }
 
     public void UpdateCurrentCardUI(){
         cardUIManager.ShowCard(currentCard);
+    }
+
+    int counterForInOrderMode = 0;
+    private Card GetNextCardInOrderMode()
+    {
+        if(currentCardSet.Count == 0){
+            return null;
+        }
+
+        Card nextCard = currentCardSet[counterForInOrderMode];
+
+        counterForInOrderMode++;
+        if(counterForInOrderMode >= currentCardSet.Count){
+            counterForInOrderMode = 0;
+        }
+        return nextCard;
+    }
+
+    private Card GetNextCardRandomMode()
+    {
+        Card nextCard;
+        do{
+            nextCard = GetRandomCardFromList(currentCardSet);
+        }while(nextCard.Equals(currentCard));
+
+        return nextCard;
     }
 
     private Card GetRandomCardFromList(List<Card> cards)
@@ -92,6 +152,15 @@ public class CardManager : MonoBehaviour
         }
         int randomIndex = UnityEngine.Random.Range(0, cards.Count);
         return cards[randomIndex];
+    }
+
+    private Card GetNextCardSmartMode()
+    {
+        Card nextCard;
+        do{
+            nextCard = GetRandomCardFromListBasedOfChance(currentCardSet);
+        }while (currentCardSet.Count >= 2 && nextCard.Equals(currentCard));
+        return nextCard;
     }
 
     private Card GetRandomCardFromListBasedOfChance(List<Card> cards)
