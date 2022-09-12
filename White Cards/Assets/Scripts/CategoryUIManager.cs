@@ -8,6 +8,7 @@ public class CategoryUIManager : MonoBehaviour
     [SerializeField] private Transform contentTransform;
 
     [SerializeField] private CardManager cardManager;
+    [SerializeField] private float spaceAtEnd;
 
     private void OnEnable()
     {
@@ -28,7 +29,7 @@ public class CategoryUIManager : MonoBehaviour
         }
 
         RectTransform rt = contentTransform.GetComponent<RectTransform>();
-        rt.sizeDelta = new Vector2(rt.sizeDelta.x, (categories.Count) * spaceBetween);
+        rt.sizeDelta = new Vector2(rt.sizeDelta.x, (categories.Count) * spaceBetween + spaceAtEnd);
     }
 
     public void UpdateCategoryUI()

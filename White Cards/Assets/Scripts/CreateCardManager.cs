@@ -9,8 +9,6 @@ using System.Text.RegularExpressions;
 
 public class CreateCardManager : MonoBehaviour
 {
-    [SerializeField] private int startpointsForCard;
-
     [SerializeField] private CardManager cardManager;
 
     [SerializeField] private TMP_InputField questionInputField;
@@ -46,7 +44,7 @@ public class CreateCardManager : MonoBehaviour
         int categoryDropdownValue = categoryDropdown.value;
         Guid categoryUuid = categories[categoryDropdownValue].Uuid;
 
-        Card card = new Card(uuid, question, answear, currentImageAsBytesQuestion, currentImageAsBytesAnswear, startpointsForCard, categoryUuid);
+        Card card = new Card(uuid, question, answear, currentImageAsBytesQuestion, currentImageAsBytesAnswear, cardManager.startpointsForCard, categoryUuid);
         cardManager.SaveCard(card, categories[categoryDropdownValue]);
 
         currentImageAsBytesQuestion = null;

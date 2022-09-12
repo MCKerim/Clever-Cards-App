@@ -39,4 +39,9 @@ public class CategoryButtonManager : MonoBehaviour
     {
         editCategoryManager.StartEditingCategory(category);
     }
+
+    public void ShareThisCategory()
+    {
+        cardManager.ShareCategory(category);
+    }
 }

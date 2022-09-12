@@ -5,9 +5,12 @@ using System;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using TMPro;
+using NativeShareNamespace;
+using NativeFilePickerNamespace;
 
 public class CardManager : MonoBehaviour
 {
+    public int startpointsForCard;
     private Card currentCard;
     private Category currentCategory;
 
@@ -191,7 +194,7 @@ public class CardManager : MonoBehaviour
     {
         List<Card> cardsOfCategory =  LoadCardsOfCategoryFromFile(category);
         cardsOfCategory.Add(card);
-        SaveCardsOfCategory(cardsOfCategory, category);
+        SaveCardsOfCategory(category, cardsOfCategory);
     }
 
     public void DeleteCurrentCard()
@@ -281,7 +284,7 @@ public class CardManager : MonoBehaviour
 
     public void SaveCurrentCardSet(){
         if(currentCardSet != null){
-            SaveCardsOfCategory(currentCardSet, currentCategory);
+            SaveCardsOfCategory(currentCategory, currentCardSet);
         }
     }
 
@@ -318,7 +321,7 @@ public class CardManager : MonoBehaviour
         Debug.Log("Categories Saved in: " + path);
     }
 
-    private void SaveCardsOfCategory(List<Card> cards, Category category){
+    private void SaveCardsOfCategory(Category category, List<Card> cards){
         Debug.Log("Try to save Cards of a Category..");
         BinaryFormatter formatter = new BinaryFormatter();
 
@@ -375,6 +378,97 @@ public class CardManager : MonoBehaviour
             return cards;
         }
     }
+
+    [SerializeField] private TextMeshProUGUI errorText;
+    public void ShareCategory(Category category)
+    {
+        BinaryFormatter formatter = new BinaryFormatter();
+
+        string path = Application.persistentDataPath + "/" + category.Name + ".txt";
+        FileStream stream = new FileStream(path, FileMode.Create);
+
+        ShareableCategoryData shareableCategoryData = new ShareableCategoryData(category, LoadCardsOfCategoryFromFile(category));
+
+        formatter.Serialize(stream, shareableCategoryData);
+        stream.Close();
+        Debug.Log("Shareable category Saved in: " + path);
+        errorText.SetText("Saved: " + path);
+
+        new NativeShare().AddFile( path )
+		.SetSubject( category.Name + " Category" ).SetText( "Import this file in White Cards App to learn with it!" ).SetUrl( "https://MCKerim.com" )
+		.SetCallback( ( result, shareTarget ) => 
+        {
+            Debug.Log("Share result: " + result + ", selected app: " + shareTarget);
+            File.Delete(path); 
+        })
+		.Share();
+    }
+
+    public void ImportCategory()
+    {
+        string fileType = NativeFilePicker.ConvertExtensionToFileType( "txt" );
+        if(NativeFilePicker.IsFilePickerBusy()){
+            return;
+        }
+        
+        NativeFilePicker.Permission permission = NativeFilePicker.PickFile( ( path ) =>
+			{
+				if( path == null ){
+                    Debug.Log( "Operation cancelled" );
+                    errorText.SetText("Cancelled.");
+                }
+				else{
+                    Debug.Log( "Picked file: " + path );
+                    errorText.SetText("");
+                    LoadShareableCategory(path);
+                }
+					
+			}, new string[] { fileType } );
+
+		Debug.Log( "Permission result: " + permission );
+        //errorText.SetText( "Permission result: " + permission );
+    }   
+
+    private void LoadShareableCategory(string path)
+    {
+        if (File.Exists(path))
+        {
+            BinaryFormatter formatter = new BinaryFormatter();
+            FileStream stream = new FileStream(path, FileMode.Open);
+
+            ShareableCategoryData shareableCategoryData = null;
+            try{
+                shareableCategoryData = formatter.Deserialize(stream) as ShareableCategoryData;
+                stream.Close();
+            }catch(Exception e){
+                errorText.SetText(e.Message);
+                return;
+            }
+            stream.Close();
+            if(shareableCategoryData == null){
+                return;
+            }
+
+            Debug.Log("Save File Found in: " + path);
+            errorText.SetText("");
+
+            Category newCategory = new Category(Guid.NewGuid(), shareableCategoryData.category.Name);
+            SaveCategory(newCategory);
+
+            List<Card> cleanCards = new List<Card>();
+            foreach(Card c in shareableCategoryData.cards){
+                Card card = new Card(Guid.NewGuid(), c.Question, c.Answear, c.ImageBytesQuestion, c.ImageBytesAnswear, startpointsForCard, newCategory.Uuid);
+                cleanCards.Add(card);
+            }
+            SaveCardsOfCategory(newCategory, cleanCards);
+            GameObject.FindObjectOfType<CategoryUIManager>().UpdateCategoryUI();
+            errorText.SetText("Succesfully Imported");
+        }
+        else
+        {
+            errorText.SetText("Not found in:" + path);
+        }
+    }
 }
 
 [System.Serializable]
@@ -394,6 +488,18 @@ public class CardsFromCategoryData
     public List<Card> cards;
 
     public CardsFromCategoryData(List<Card> cards){
+        this.cards = cards;
+    }
+}
+
+[System.Serializable]
+public class ShareableCategoryData
+{
+    public Category category;
+    public List<Card> cards;
+
+    public ShareableCategoryData(Category category, List<Card> cards){
+        this.category = category;
         this.cards = cards;
     }
 }
