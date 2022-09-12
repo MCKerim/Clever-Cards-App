@@ -36,7 +36,6 @@ public class CreateCardManager : MonoBehaviour
             return;
         }
 
-        Guid uuid = Guid.NewGuid();
         string question = questionInputField.text;
         questionInputField.text = "";
         string answear = answearInputField.text;
@@ -44,7 +43,7 @@ public class CreateCardManager : MonoBehaviour
         int categoryDropdownValue = categoryDropdown.value;
         Guid categoryUuid = categories[categoryDropdownValue].Uuid;
 
-        Card card = new Card(uuid, question, answear, currentImageAsBytesQuestion, currentImageAsBytesAnswear, cardManager.startpointsForCard, categoryUuid);
+        Card card = new Card(question, answear, currentImageAsBytesQuestion, currentImageAsBytesAnswear, cardManager.startpointsForCard, categoryUuid);
         cardManager.SaveCard(card, categories[categoryDropdownValue]);
 
         currentImageAsBytesQuestion = null;

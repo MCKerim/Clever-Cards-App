@@ -215,25 +215,6 @@ public class CardManager : MonoBehaviour
         SaveCardsOfCategory(cardsOfCategory, category);
     }*/
 
-    public void CreateTestCards(int amount)
-    {
-        for(int i=0; i < amount; i++)
-        {
-            Guid uuid = Guid.NewGuid();
-            SaveCard(new Card(uuid, "Question " + i, "Answear " + i, null, null, 50, categories[0].Uuid), categories[0]);
-        }
-    }
-
-    public void CreateTestCategories(int amount)
-    {
-        for (int i = 0; i < amount; i++)
-        {
-            Guid uuid = Guid.NewGuid();
-            Category testCategory = new Category(uuid, "Category " + i);
-            SaveCategory(testCategory);
-        }
-    }
-
     public List<Category> GetAllCategories()
     {
         return categories;
@@ -287,25 +268,6 @@ public class CardManager : MonoBehaviour
             SaveCardsOfCategory(currentCategory, currentCardSet);
         }
     }
-
-    /*private void SaveData()
-    {
-        Debug.Log("Try to Save..");
-        BinaryFormatter formatter = new BinaryFormatter();
-        string path = Application.persistentDataPath + "/whiteCardsData.MCKerimData";
-        FileStream stream = new FileStream(path, FileMode.Create);
-
-        Data data = new Data(allCards, categories);
-
-        formatter.Serialize(stream, data);
-        stream.Close();
-        Debug.Log("Data Saved in: " + path);
-
-        foreach (Card c in allCards)
-        {
-            Debug.Log("All Cards: " + c.Question);
-        }
-    }*/
 
     public void SaveCategories(){
         Debug.Log("Try to save Categories..");
@@ -457,7 +419,7 @@ public class CardManager : MonoBehaviour
 
             List<Card> cleanCards = new List<Card>();
             foreach(Card c in shareableCategoryData.cards){
-                Card card = new Card(Guid.NewGuid(), c.Question, c.Answear, c.ImageBytesQuestion, c.ImageBytesAnswear, startpointsForCard, newCategory.Uuid);
+                Card card = new Card(c.Question, c.Answear, c.ImageBytesQuestion, c.ImageBytesAnswear, startpointsForCard, newCategory.Uuid);
                 cleanCards.Add(card);
             }
             SaveCardsOfCategory(newCategory, cleanCards);

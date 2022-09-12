@@ -15,9 +15,9 @@ public class Card
     private int currentPoints;
     private Guid categoryUuid;
 
-    public Card(Guid uuid, string question, string answear, byte[] imageBytesQuestion, byte[] imageBytesAnswear, int currentPoints, Guid categoryID)
+    public Card(string question, string answear, byte[] imageBytesQuestion, byte[] imageBytesAnswear, int currentPoints, Guid categoryID)
     {
-        this.uuid = uuid;
+        this.uuid = Guid.NewGuid();
         this.question = question;
         this.answear = answear;
 

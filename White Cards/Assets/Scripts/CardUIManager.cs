@@ -24,7 +24,7 @@ public class CardUIManager : MonoBehaviour
     {
         if(card == null)
         {
-            currentCard = new Card(new System.Guid(), "No Cards in this Category.", "This is a test card. Please create your own cards in the Create Card menu.", null, null, 0, new System.Guid());
+            currentCard = new Card("No Cards in this Category.", "This is a test card. Please create your own cards in the Create Card menu.", null, null, 0, new System.Guid());
         }
         else
         {
