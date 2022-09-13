@@ -7,6 +7,7 @@ using System.Runtime.Serialization.Formatters.Binary;
 using TMPro;
 using NativeShareNamespace;
 using NativeFilePickerNamespace;
+using UnityEngine.Android;
 
 public class CardManager : MonoBehaviour
 {
@@ -24,6 +25,9 @@ public class CardManager : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI currentGameModeText;
     private GameMode currentGameMode;
+
+    [SerializeField] private GameObject importErrorPanel;
+    [SerializeField] private TextMeshProUGUI importErrorText;
 
     // Start is called before the first frame update
     void Start()
@@ -341,7 +345,6 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    [SerializeField] private TextMeshProUGUI errorText;
     public void ShareCategory(Category category)
     {
         BinaryFormatter formatter = new BinaryFormatter();
@@ -353,8 +356,6 @@ public class CardManager : MonoBehaviour
 
         formatter.Serialize(stream, shareableCategoryData);
         stream.Close();
-        Debug.Log("Shareable category Saved in: " + path);
-        errorText.SetText("Saved: " + path);
 
         new NativeShare().AddFile( path )
 		.SetSubject( category.Name + " Category" ).SetText( "Import this file in White Cards App to learn with it!" ).SetUrl( "https://MCKerim.com" )
@@ -366,30 +367,58 @@ public class CardManager : MonoBehaviour
 		.Share();
     }
 
+    internal void PermissionCallbacks_PermissionDeniedAndDontAskAgain(string permissionName)
+    {
+        importErrorPanel.SetActive(true);
+        importErrorText.SetText("Please give this app permission to read files. We cannot ask again.");
+    }
+
+    internal void PermissionCallbacks_PermissionGranted(string permissionName)
+    {
+        PermissionGranted();
+    }
+
+    internal void PermissionCallbacks_PermissionDenied(string permissionName)
+    {
+        importErrorPanel.SetActive(true);
+        importErrorText.SetText("Please give this app permission to read files.");
+    }
+
     public void ImportCategory()
     {
-        string fileType = NativeFilePicker.ConvertExtensionToFileType( "txt" );
         if(NativeFilePicker.IsFilePickerBusy()){
             return;
         }
-        
-        NativeFilePicker.Permission permission = NativeFilePicker.PickFile( ( path ) =>
-			{
-				if( path == null ){
-                    Debug.Log( "Operation cancelled" );
-                    errorText.SetText("Cancelled.");
-                }
-				else{
-                    Debug.Log( "Picked file: " + path );
-                    errorText.SetText("");
-                    LoadShareableCategory(path);
-                }
-					
-			}, new string[] { fileType } );
 
-		Debug.Log( "Permission result: " + permission );
-        //errorText.SetText( "Permission result: " + permission );
+        if (Permission.HasUserAuthorizedPermission(Permission.ExternalStorageRead))
+        {
+            PermissionGranted();
+        }
+        else
+        {
+            var callbacks = new PermissionCallbacks();
+            callbacks.PermissionDenied += PermissionCallbacks_PermissionDenied;
+            callbacks.PermissionGranted += PermissionCallbacks_PermissionGranted;
+            callbacks.PermissionDeniedAndDontAskAgain += PermissionCallbacks_PermissionDeniedAndDontAskAgain;
+            Permission.RequestUserPermission(Permission.ExternalStorageRead, callbacks);
+        }
     }   
+
+    private void PermissionGranted()
+    {
+        string fileType = NativeFilePicker.ConvertExtensionToFileType( "txt" );
+
+        NativeFilePicker.PickFile( ( path ) =>
+		{
+			if( path == null ){
+                Debug.Log( "Operation cancelled" );
+            }
+			else{
+                LoadShareableCategory(path);
+            }
+		}, new string[] { fileType } );
+
+    }
 
     private void LoadShareableCategory(string path)
     {
@@ -403,16 +432,14 @@ public class CardManager : MonoBehaviour
                 shareableCategoryData = formatter.Deserialize(stream) as ShareableCategoryData;
                 stream.Close();
             }catch(Exception e){
-                errorText.SetText(e.Message);
+                importErrorPanel.SetActive(true);
+                importErrorText.SetText("Please select another file. " + e.Message);
+                stream.Close();
                 return;
             }
-            stream.Close();
             if(shareableCategoryData == null){
                 return;
             }
-
-            Debug.Log("Save File Found in: " + path);
-            errorText.SetText("");
 
             Category newCategory = new Category(Guid.NewGuid(), shareableCategoryData.category.Name);
             SaveCategory(newCategory);
@@ -424,12 +451,18 @@ public class CardManager : MonoBehaviour
             }
             SaveCardsOfCategory(newCategory, cleanCards);
             GameObject.FindObjectOfType<CategoryUIManager>().UpdateCategoryUI();
-            errorText.SetText("Succesfully Imported");
         }
         else
         {
-            errorText.SetText("Not found in:" + path);
+            importErrorPanel.SetActive(true);
+            importErrorText.SetText("File not found.");
         }
+    }
+
+    public void HideImportErrorPanel()
+    {
+        importErrorText.SetText("");
+        importErrorPanel.SetActive(false);
     }
 }
 
