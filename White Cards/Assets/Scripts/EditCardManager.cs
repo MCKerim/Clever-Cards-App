@@ -15,7 +15,6 @@ public class EditCardManager : MonoBehaviour
 
     [SerializeField] private GameObject createCategoryPanel;
     [SerializeField] private TMP_InputField createCategoryInputField;
-    [SerializeField] private Transform dropdownContentTransform;
 
     private byte[] currentImageAsBytesQuestion;
     private byte[] currentImageAsBytesAnswear;
@@ -44,7 +43,7 @@ public class EditCardManager : MonoBehaviour
         currentImageAsBytesAnswear = cardToEdit.ImageBytesQuestion;
 
         for(int i=0; i < categories.Count; i++){
-            if(categories[i].Equals(cardManager.GetCurrentCard())){
+            if(categories[i].Equals(cardManager.GetCurrentCategory())){
                 categoryDropdown.value = i;
                 return;
             }
@@ -120,23 +119,10 @@ public class EditCardManager : MonoBehaviour
     {
         categories = cardManager.GetAllCategories();
 
-        List<TMP_Dropdown.OptionData> dropdownOptions = new List<TMP_Dropdown.OptionData>();
+        categoryDropdown.options.Clear();
         foreach (Category c in categories)
         {
-            TMP_Dropdown.OptionData newOption = new TMP_Dropdown.OptionData();
-            newOption.text = c.Name;
-            dropdownOptions.Add(newOption);
-        }
-
-        categoryDropdown.options = dropdownOptions;
-
-        float spaceBetween = 100;
-        RectTransform rt = dropdownContentTransform.GetComponent<RectTransform>();
-        rt.sizeDelta = new Vector2(rt.sizeDelta.x, (categories.Count-1) * spaceBetween);
-
-        //Can happen when last category was deleted
-        if(categoryDropdown.value > categoryDropdown.options.Count-1){
-            categoryDropdown.value = categoryDropdown.options.Count-1;
+            categoryDropdown.options.Add(new TMP_Dropdown.OptionData(){ text = c.Name});
         }
     }
 
