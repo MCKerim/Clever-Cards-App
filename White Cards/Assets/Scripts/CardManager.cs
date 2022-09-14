@@ -238,13 +238,29 @@ public class CardManager : MonoBehaviour
         SaveCategories();
     }
 
-    public void DeleteCategory(Category category)
+    private Category categorySelectedToDelete;
+    [SerializeField] private GameObject confirmCategoryDeletionPanel;
+    [SerializeField] private TextMeshProUGUI confirmCategoryDeletionText;
+    public void ShowConfirmDeleteCategoryPanel(Category category)
     {
-        categories.Remove(category);
+        categorySelectedToDelete = category;
+        confirmCategoryDeletionPanel.SetActive(true);
+        confirmCategoryDeletionText.SetText("Sure you want to delete category: " + category.Name + "?");
+    }
+
+    public void HideConfirmDeleteCategoryPanel()
+    {
+        categorySelectedToDelete = null;
+        confirmCategoryDeletionPanel.SetActive(false);
+    }
+
+    public void DeleteSelectedCategory()
+    {
+        categories.Remove(categorySelectedToDelete);
         //Delete cards file for that category
         try
         {
-            string path = Application.persistentDataPath + "/" + category.Uuid + ".MCKerimData";
+            string path = Application.persistentDataPath + "/" + categorySelectedToDelete.Uuid + ".MCKerimData";
             File.Delete(path);
         }
         catch (Exception ex)
@@ -252,6 +268,8 @@ public class CardManager : MonoBehaviour
             Debug.LogException(ex);
         }
         SaveCategories();
+        GameObject.FindObjectOfType<CategoryUIManager>().UpdateCategoryUI();
+        HideConfirmDeleteCategoryPanel();
     }
 
     private void OnApplicationQuit()

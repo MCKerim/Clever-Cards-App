@@ -31,8 +31,7 @@ public class CategoryButtonManager : MonoBehaviour
 
     public void DeleteThisCategory()
     {
-        cardManager.DeleteCategory(category);
-        GameObject.FindObjectOfType<CategoryUIManager>().UpdateCategoryUI();
+        cardManager.ShowConfirmDeleteCategoryPanel(category);
     }
 
     public void EditThisCategory()
