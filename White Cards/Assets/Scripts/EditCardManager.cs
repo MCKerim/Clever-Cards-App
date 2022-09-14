@@ -26,6 +26,7 @@ public class EditCardManager : MonoBehaviour
 
     private void Start() {
         uIManager = GameObject.FindObjectOfType<UIManager>();
+        UpdateCategoryDropdown();
     }
 
     private void OnEnable()
@@ -111,6 +112,10 @@ public class EditCardManager : MonoBehaviour
 
         UpdateCategoryDropdown();
         categoryDropdown.value = categoryDropdown.options.Count-1;
+        if(categories.Count == 1)
+        {
+            categoryDropdown.captionText.SetText(categories[0].Name);
+        }
 
         HideCreateCategoryPanel();
     }
@@ -123,6 +128,16 @@ public class EditCardManager : MonoBehaviour
         foreach (Category c in categories)
         {
             categoryDropdown.options.Add(new TMP_Dropdown.OptionData(){ text = c.Name});
+        }
+
+        //Can happen when last category was deleted
+        if(categories.Count > 0 && categoryDropdown.value >= categories.Count-1)
+        {
+            categoryDropdown.value = categories.Count-1;
+        }
+        else if(categories.Count == 0)
+        {
+            categoryDropdown.captionText.SetText("Please create a category");
         }
     }
 

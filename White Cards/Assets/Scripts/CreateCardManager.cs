@@ -14,6 +14,7 @@ public class CreateCardManager : MonoBehaviour
     [SerializeField] private TMP_InputField questionInputField;
     [SerializeField] private TMP_InputField answearInputField;
     [SerializeField] private TMP_Dropdown categoryDropdown;
+    [SerializeField] private TextMeshProUGUI categoryLabelText;
 
     [SerializeField] private GameObject createCategoryPanel;
     [SerializeField] private TMP_InputField createCategoryInputField;
@@ -24,6 +25,10 @@ public class CreateCardManager : MonoBehaviour
 
     private void OnEnable()
     {
+        UpdateCategoryDropdown();
+    }
+
+    private void Start() {
         UpdateCategoryDropdown();
     }
 
@@ -74,6 +79,10 @@ public class CreateCardManager : MonoBehaviour
 
         UpdateCategoryDropdown();
         categoryDropdown.value = categoryDropdown.options.Count-1;
+        if(categories.Count == 1)
+        {
+            categoryDropdown.captionText.SetText(categories[0].Name);
+        }
 
         HideCreateCategoryPanel();
     }
@@ -89,8 +98,13 @@ public class CreateCardManager : MonoBehaviour
         }
 
         //Can happen when last category was deleted
-        if(categoryDropdown.value > categoryDropdown.options.Count-1){
-            categoryDropdown.value = categoryDropdown.options.Count-1;
+        if(categories.Count > 0 && categoryDropdown.value >= categories.Count-1)
+        {
+            categoryDropdown.value = categories.Count-1;
+        }
+        else if(categories.Count == 0)
+        {
+            categoryDropdown.captionText.SetText("Please create a category");
         }
     }
 
