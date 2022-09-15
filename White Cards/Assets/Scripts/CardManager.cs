@@ -64,18 +64,22 @@ public class CardManager : MonoBehaviour
             return;
         }
 
-        if (currentCard.CurrentPoints + addPoints >= 10 && currentCard.CurrentPoints + addPoints <= 100)
+        if(currentGameMode == GameMode.Smart)
         {
-            currentCard.CurrentPoints += addPoints;
+            if (currentCard.CurrentPoints + addPoints >= 10 && currentCard.CurrentPoints + addPoints <= 100)
+            {
+                currentCard.CurrentPoints += addPoints;
+            }
+            else if (currentCard.CurrentPoints + addPoints > 100)
+            {
+                currentCard.CurrentPoints = 100;
+            }
+            else
+            {
+                currentCard.CurrentPoints = 10;
+            }
         }
-        else if (currentCard.CurrentPoints + addPoints > 100)
-        {
-            currentCard.CurrentPoints = 100;
-        }
-        else
-        {
-            currentCard.CurrentPoints = 10;
-        }
+        
         ShowNextCard();
     }
 
