@@ -48,6 +48,15 @@ public class CardManager : MonoBehaviour
         ShowNextCard();
     }
 
+    public void ResetCurrentCardSetPoints()
+    {
+        foreach(Card c in currentCardSet)
+        {
+            c.CurrentPoints = startpointsForCard;
+        }
+        ShowNextCard();
+    }
+
     public void RateCard(int addPoints)
     {
         if(currentCard == null)
