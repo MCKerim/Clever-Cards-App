@@ -354,7 +354,7 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    private List<Card> LoadCardsOfCategoryFromFile(Category category)
+    public List<Card> LoadCardsOfCategoryFromFile(Category category)
     {
         string path = Application.persistentDataPath + "/" + category.Uuid + ".MCKerimData";
         if (File.Exists(path))
