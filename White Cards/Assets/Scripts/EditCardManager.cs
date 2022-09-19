@@ -41,7 +41,7 @@ public class EditCardManager : MonoBehaviour
         questionInputField.text = cardToEdit.Question;
         answearInputField.text = cardToEdit.Answear;
         currentImageAsBytesQuestion = cardToEdit.ImageBytesQuestion;
-        currentImageAsBytesAnswear = cardToEdit.ImageBytesQuestion;
+        currentImageAsBytesAnswear = cardToEdit.ImageBytesAnswear;
 
         for(int i=0; i < categories.Count; i++){
             if(categories[i].Equals(cardManager.GetCurrentCategory())){
