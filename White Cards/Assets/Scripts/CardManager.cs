@@ -45,7 +45,9 @@ public class CardManager : MonoBehaviour
         currentCardSet = LoadCardsOfCategoryFromFile(currentCategory);
 
         counterForInOrderMode = 0;
-        ShowNextCard();
+
+        currentCard = GetNextCard(currentGameMode);
+        cardUIManager.ShowFirstCard(currentCard);
     }
 
     public void ResetCurrentCardSetPoints()
@@ -54,33 +56,69 @@ public class CardManager : MonoBehaviour
         {
             c.CurrentPoints = startpointsForCard;
         }
-        ShowNextCard();
+        currentCard = GetNextCard(currentGameMode);
+        cardUIManager.ShowCardWithoutAnim(currentCard);
     }
 
-    public void RateCard(int addPoints)
+    public void RateCardEasy()
     {
         if(currentCard == null)
         {
             return;
         }
 
-        if(currentGameMode == GameMode.Smart)
+        if(currentGameMode == GameMode.Smart){
+            RateCard(-10, currentCard);
+        }
+
+        currentCard = GetNextCard(currentGameMode);
+        cardUIManager.MoveCardLeft(currentCard);
+    }
+
+    public void RateCardMedium()
+    {
+        if(currentCard == null)
         {
-            if (currentCard.CurrentPoints + addPoints >= 10 && currentCard.CurrentPoints + addPoints <= 100)
-            {
-                currentCard.CurrentPoints += addPoints;
-            }
-            else if (currentCard.CurrentPoints + addPoints > 100)
-            {
-                currentCard.CurrentPoints = 100;
-            }
-            else
-            {
-                currentCard.CurrentPoints = 10;
-            }
+            return;
+        }
+
+        if(currentGameMode == GameMode.Smart){
+            RateCard(0, currentCard);
+        }
+
+        currentCard = GetNextCard(currentGameMode);
+        cardUIManager.MoveCardDown(currentCard);
+    }
+
+    public void RateCardHard()
+    {
+        if(currentCard == null)
+        {
+            return;
+        }
+
+        if(currentGameMode == GameMode.Smart){
+            RateCard(10, currentCard);
         }
         
-        ShowNextCard();
+        currentCard = GetNextCard(currentGameMode);
+        cardUIManager.MoveCardRight(currentCard);
+    }
+
+    private void RateCard(int addPoints, Card card)
+    {
+        if (card.CurrentPoints + addPoints >= 10 && card.CurrentPoints + addPoints <= 100)
+        {
+            card.CurrentPoints += addPoints;
+        }
+        else if (card.CurrentPoints + addPoints > 100)
+        {
+            card.CurrentPoints = 100;
+        }
+        else
+        {
+            card.CurrentPoints = 10;
+        }
     }
 
     public void StartEditingCurrentCard()
@@ -112,30 +150,28 @@ public class CardManager : MonoBehaviour
         currentGameModeText.SetText(currentGameMode + " Mode");
     }
 
-    public void ShowNextCard()
+    public Card GetNextCard(GameMode mode)
     {
-        switch(currentGameMode){
+        Card nextCard = null;
+        switch(mode){
             case GameMode.Smart:
-                currentCard = GetNextCardSmartMode();
+                nextCard = GetNextCardSmartMode();
             break;
             
             case GameMode.Random:
-                currentCard = GetNextCardRandomMode();
+                nextCard = GetNextCardRandomMode();
             break;
 
             case GameMode.InOrder:
-                currentCard = GetNextCardInOrderMode();
+                nextCard = GetNextCardInOrderMode();
             break;
 
             default:
                 Debug.LogError("Game Mode not implemented.");
             break;
         }
-        cardUIManager.ShowCard(currentCard);
-    }
 
-    public void UpdateCurrentCardUI(){
-        cardUIManager.ShowCard(currentCard);
+        return nextCard;
     }
 
     int counterForInOrderMode = 0;
@@ -156,6 +192,10 @@ public class CardManager : MonoBehaviour
 
     private Card GetNextCardRandomMode()
     {
+        if(currentCardSet.Count == 0){
+            return null;
+        }
+
         Card nextCard;
         do{
             nextCard = GetRandomCardFromList(currentCardSet);
@@ -166,7 +206,7 @@ public class CardManager : MonoBehaviour
 
     private Card GetRandomCardFromList(List<Card> cards)
     {
-        if(cards.Count <= 0)
+        if(cards.Count == 0)
         {
             return null;
         }
@@ -176,6 +216,10 @@ public class CardManager : MonoBehaviour
 
     private Card GetNextCardSmartMode()
     {
+        if(currentCardSet.Count == 0){
+            return null;
+        }
+
         Card nextCard;
         do{
             nextCard = GetRandomCardFromListBasedOfChance(currentCardSet);
@@ -222,15 +266,14 @@ public class CardManager : MonoBehaviour
         }
 
         currentCardSet.Remove(currentCard);
-        ShowNextCard();
+        currentCard = GetNextCard(currentGameMode);
+        cardUIManager.MoveCardRight(currentCard);
     }
 
-    /*public void DeleteCard(Card card, Category category)
+    public void UpdateCurrentCardUI()
     {
-        List<Card> cardsOfCategory =  LoadCardsOfCategoryFromFile(category);
-        cardsOfCategory.Remove(card);
-        SaveCardsOfCategory(cardsOfCategory, category);
-    }*/
+        cardUIManager.ShowCardWithoutAnim(currentCard);
+    }
 
     public List<Category> GetAllCategories()
     {

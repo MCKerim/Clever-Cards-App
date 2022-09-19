@@ -20,20 +20,56 @@ public class CardUIManager : MonoBehaviour
 
     private bool showsQuestion;
 
-    public void ShowCard(Card card)
-    {
-        if(card == null)
-        {
-            currentCard = new Card("No Cards in this Category.", "This is a test card. Please create your own cards in the Create Card menu.", null, null, 0, new System.Guid());
-        }
-        else
-        {
-            currentCard = card;
-        }
-        LeanTween.moveLocalX(gameObject, 1000, 0.25f).setOnComplete(MoveBack);
+    private Vector3 startPos;
+    private void OnEnable() {
+        startPos = transform.localPosition;
     }
 
-    private void MoveBack()
+    public void ShowCardWithoutAnim(Card card)
+    {
+        currentCard = card;
+        UpdatePointsUI();
+        ShowQuestion();
+    }
+
+    public void ShowFirstCard(Card card)
+    {
+        currentCard = card;
+        MoveCardBack();
+    }
+
+    public void MoveCardLeft(Card card)
+    {
+        currentCard = card;
+        LeanTween.moveLocalX(gameObject, -1000, 0.25f).setOnComplete(MoveCardBack);
+    }
+
+    public void MoveCardRight(Card card)
+    {
+        currentCard = card;
+        LeanTween.moveLocalX(gameObject, 1000, 0.25f).setOnComplete(MoveCardBack);
+    }
+
+    public void MoveCardDown(Card card)
+    {
+        currentCard = card;
+        LeanTween.moveLocalY(gameObject, -1500, 0.25f).setOnComplete(MoveCardBack);
+    }
+
+    private void MoveCardBack()
+    {
+        if(currentCard == null){
+            currentCard = new Card("No Cards in this Category.", "This is a test card. Please create your own cards in the Create Card menu.", null, null, 0, new System.Guid());
+        }
+        UpdatePointsUI();
+        ShowQuestion();
+
+        gameObject.transform.localPosition = startPos;
+        LeanTween.moveLocalX(gameObject, -1000, 0);
+        LeanTween.moveLocalX(gameObject, 0, 0.25f);
+    }
+
+    private void UpdatePointsUI()
     {
         currentPointsText.SetText("Points: " + currentCard.CurrentPoints);
         if (currentCard.CurrentPoints >= 70)
@@ -48,28 +84,6 @@ public class CardUIManager : MonoBehaviour
         {
             hardnesBar.color = easyColor;
         }
-
-        ShowQuestion();
-        LeanTween.moveLocalX(gameObject, -1000, 0);
-        LeanTween.moveLocalX(gameObject, 0, 0.25f);
-    }
-
-    public void Turn()
-    {
-        LeanTween.rotateLocal(gameObject, new Vector3(0, 90, 0), 0.25f).setOnComplete(RotateBack);
-    }
-
-    private void RotateBack()
-    {
-        if (showsQuestion)
-        {
-            ShowAnswear();
-        }
-        else
-        {
-            ShowQuestion();
-        }
-        LeanTween.rotateLocal(gameObject, new Vector3(0, 0, 0), 0.5f);
     }
 
     private void ShowQuestion()
@@ -112,5 +126,23 @@ public class CardUIManager : MonoBehaviour
             textBox.alignment = TextAlignmentOptions.MidlineLeft;
             questionRawImage.gameObject.SetActive(false);
         }
+    }
+
+    public void Turn()
+    {
+        LeanTween.rotateLocal(gameObject, new Vector3(0, 90, 0), 0.25f).setOnComplete(RotateBack);
+    }
+
+    private void RotateBack()
+    {
+        if (showsQuestion)
+        {
+            ShowAnswear();
+        }
+        else
+        {
+            ShowQuestion();
+        }
+        LeanTween.rotateLocal(gameObject, new Vector3(0, 0, 0), 0.5f);
     }
 }
