@@ -30,7 +30,7 @@ public class CardManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI importErrorText;
 
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         categories = LoadCategoriesFromFile();
         SelectGameMode(GameMode.Smart);
