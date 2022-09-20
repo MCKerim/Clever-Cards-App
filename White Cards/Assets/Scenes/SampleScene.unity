@@ -2680,7 +2680,7 @@ GameObject:
   - component: {fileID: 600051025}
   - component: {fileID: 600051024}
   m_Layer: 0
-  m_Name: Panel
+  m_Name: Rate Card Visuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

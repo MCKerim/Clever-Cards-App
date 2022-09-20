@@ -38,39 +38,39 @@ public class CardUIManager : MonoBehaviour
         MoveCardBack();
     }
 
-    [SerializeField] private Image panel;
-    [SerializeField] private CanvasGroup c;
+    [SerializeField] private Image rateCardVisualPanel;
+    [SerializeField] private CanvasGroup rateCardVisualcanvasGroup;
 
-    private void ShoAnim(Color co)
+    private void PlayRateCardEffect(Color color)
     {
-        panel.color = co;
-        LeanTween.alphaCanvas(c, 0.3f, 0.25f).setOnComplete(Back);
+        rateCardVisualPanel.color = color;
+        LeanTween.alphaCanvas(rateCardVisualcanvasGroup, 0.15f, 0.25f).setOnComplete(Back);
     }
 
     private void Back()
     {
-        LeanTween.alphaCanvas(c, 0f, 0.25f);
+        LeanTween.alphaCanvas(rateCardVisualcanvasGroup, 0f, 0.25f);
     }
 
     public void MoveCardLeft(Card card)
     {
         currentCard = card;
         LeanTween.moveLocalX(gameObject, -1000, 0.25f).setOnComplete(MoveCardBack);
-        ShoAnim(easyColor);
+        PlayRateCardEffect(easyColor);
     }
 
     public void MoveCardRight(Card card)
     {
         currentCard = card;
         LeanTween.moveLocalX(gameObject, 1000, 0.25f).setOnComplete(MoveCardBack);
-        ShoAnim(hardColor);
+        PlayRateCardEffect(hardColor);
     }
 
     public void MoveCardDown(Card card)
     {
         currentCard = card;
         LeanTween.moveLocalY(gameObject, -1500, 0.25f).setOnComplete(MoveCardBack);
-        ShoAnim(mediumColor);
+        PlayRateCardEffect(mediumColor);
     }
 
     private void MoveCardBack()
