@@ -9154,6 +9154,10 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 1073331729136688254, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
+      propertyPath: maxTapTime
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 1073331729136688254, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
       propertyPath: marginRight
       value: 0
       objectReference: {fileID: 0}
