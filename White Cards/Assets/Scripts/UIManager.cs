@@ -4,37 +4,8 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField] private GameObject mainMenu;
     [SerializeField] private GameObject gameUI;
-    [SerializeField] private GameObject addCardUI;
     [SerializeField] private GameObject categorysUI;
-    [SerializeField] private GameObject editCardUI;
-
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    public void ShowAddCardUI()
-    {
-        addCardUI.SetActive(true);
-    }
-
-    public void HideAddCardUI()
-    {
-        addCardUI.SetActive(false);
-    }
-
-    public void ShowEditCardUI()
-    {
-        editCardUI.SetActive(true);
-    }
-
-    public void HideEditCardUI()
-    {
-        editCardUI.SetActive(false);
-    }
 
     public void ShowGameUI()
     {
@@ -44,16 +15,6 @@ public class UIManager : MonoBehaviour
     public void HideGameUI()
     {
         gameUI.SetActive(false);
-    }
-
-    public void ShowMainMenu()
-    {
-        mainMenu.SetActive(true);
-    }
-
-    public void HideMainMenu()
-    {
-        mainMenu.SetActive(false);
     }
 
     public void ShowCategoriesUI()

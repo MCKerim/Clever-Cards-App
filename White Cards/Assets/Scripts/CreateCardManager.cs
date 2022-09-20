@@ -16,23 +16,75 @@ public class CreateCardManager : MonoBehaviour
     [SerializeField] private TMP_Dropdown categoryDropdown;
     [SerializeField] private TextMeshProUGUI categoryLabelText;
 
-    [SerializeField] private GameObject createCategoryPanel;
-    [SerializeField] private TMP_InputField createCategoryInputField;
     private byte[] currentImageAsBytesQuestion;
     private byte[] currentImageAsBytesAnswear;
 
     private List<Category> categories;
-
-    private void OnEnable()
-    {
-        UpdateCategoryDropdown();
-    }
+    private UIManager uIManager;
+    private Card currentEditedCard = null;
+    [SerializeField] private GameObject createCardPanel;
 
     private void Start() {
-        UpdateCategoryDropdown();
+        uIManager = GameObject.FindObjectOfType<UIManager>();
     }
 
-    public void CreateCard()
+    public void StartCreatingNewCard()
+    {
+        createCardPanel.SetActive(true);
+        UpdateCategoryDropdown();
+        SelectCurrentCategory();
+        UpdateCreateCardUI();
+        
+        CardManager.OnCategorysChanged += UpdateCategoryDropdownAndSelectLast;
+    }
+
+    public void StartEditingCurrentCard()
+    {
+        createCardPanel.SetActive(true);
+        currentEditedCard = cardManager.GetCurrentCard();
+        UpdateCategoryDropdown();
+        SelectCurrentCategory();
+        UpdateEditCardUI();
+
+        CardManager.OnCategorysChanged += UpdateCategoryDropdownAndSelectLast;
+    }
+
+    public void CancelButtonClicked()
+    {
+        currentEditedCard = null;
+        uIManager.ShowGameUI();
+        createCardPanel.SetActive(false);
+
+        CardManager.OnCategorysChanged -= UpdateCategoryDropdownAndSelectLast;
+    }
+
+    private void SelectCurrentCategory()
+    {
+        for(int i=0; i < categories.Count; i++){
+            if(categories[i].Equals(cardManager.GetCurrentCategory())){
+                categoryDropdown.value = i;
+                return;
+            }
+        }
+    }
+
+    private void UpdateEditCardUI()
+    {
+        questionInputField.text = currentEditedCard.Question;
+        answearInputField.text = currentEditedCard.Answear;
+        currentImageAsBytesQuestion = currentEditedCard.ImageBytesQuestion;
+        currentImageAsBytesAnswear = currentEditedCard.ImageBytesAnswear;
+    }
+
+    private void UpdateCreateCardUI()
+    {
+        questionInputField.text = "";
+        answearInputField.text = "";
+        currentImageAsBytesQuestion = null;
+        currentImageAsBytesAnswear = null;
+    }
+
+    public void SaveCard()
     {
         if (questionInputField.text == "" || answearInputField.text == "" || categories.Count == 0)
         {
@@ -44,47 +96,54 @@ public class CreateCardManager : MonoBehaviour
         string answear = answearInputField.text;
         answearInputField.text = "";
         int categoryDropdownValue = categoryDropdown.value;
-        Guid categoryUuid = categories[categoryDropdownValue].Uuid;
+        Category selectedCategory = categories[categoryDropdownValue];
 
-        Card card = new Card(question, answear, currentImageAsBytesQuestion, currentImageAsBytesAnswear, cardManager.startpointsForCard, categoryUuid);
-        cardManager.SaveCard(card, categories[categoryDropdownValue]);
-
-        currentImageAsBytesQuestion = null;
-        currentImageAsBytesAnswear = null;
-    }
-
-    public void ShowCreateCategoryPanel()
-    {
-        createCategoryPanel.SetActive(true);
-    }
-
-    public void HideCreateCategoryPanel()
-    {
-        createCategoryPanel.SetActive(false);
-    }
-
-    public void CreateCategory()
-    {
-        string name = createCategoryInputField.text;
-        if(name == ""){
-            return;
-        }
-
-        Guid uuid = Guid.NewGuid();
-
-        createCategoryInputField.text = "";
-
-        Category category = new Category(uuid, name);
-        cardManager.SaveCategory(category);
-
-        UpdateCategoryDropdown();
-        categoryDropdown.value = categoryDropdown.options.Count-1;
-        if(categories.Count == 1)
+        if(currentEditedCard == null)
         {
-            categoryDropdown.captionText.SetText(categories[0].Name);
-        }
+            Card newCard = new Card(question, answear, currentImageAsBytesQuestion, currentImageAsBytesAnswear, cardManager.startpointsForCard, selectedCategory.Uuid);
+            
+            currentImageAsBytesQuestion = null;
+            currentImageAsBytesAnswear = null;
 
-        HideCreateCategoryPanel();
+            if(cardManager.GetCurrentCategory().Equals(selectedCategory))
+            {
+                cardManager.AddCardToCurrentCategory(newCard);
+            }
+            else
+            {
+                cardManager.SaveCard(newCard, selectedCategory);
+            }
+        }
+        else
+        {
+            currentEditedCard.Question = question;
+            currentEditedCard.Answear = answear;
+            currentEditedCard.ImageBytesQuestion = currentImageAsBytesQuestion;
+            currentEditedCard.ImageBytesAnswear = currentImageAsBytesAnswear;
+            currentEditedCard.CategoryUuid = selectedCategory.Uuid;
+
+            currentImageAsBytesQuestion = null;
+            currentImageAsBytesAnswear = null;
+
+            //Need to delete card from category and insert into another
+            if(cardManager.GetCurrentCategory().Equals(selectedCategory))
+            {
+                cardManager.UpdateCurrentCardUI();
+            }
+            else
+            {
+                cardManager.SaveCard(currentEditedCard, categories[categoryDropdownValue]);
+                cardManager.DeleteCurrentCard();
+            }
+
+            CancelButtonClicked();
+        }
+    }
+
+    public void UpdateCategoryDropdownAndSelectLast()
+    {
+        UpdateCategoryDropdown();
+        SelectLastCategory();
     }
 
     private void UpdateCategoryDropdown()
@@ -96,15 +155,14 @@ public class CreateCardManager : MonoBehaviour
         {
             categoryDropdown.options.Add(new TMP_Dropdown.OptionData(){ text = c.Name});
         }
+    }
 
-        //Can happen when last category was deleted
-        if(categories.Count > 0 && categoryDropdown.value >= categories.Count-1)
+    private void SelectLastCategory()
+    {
+        categoryDropdown.value = categoryDropdown.options.Count-1;
+        if(categories.Count == 1)
         {
-            categoryDropdown.value = categories.Count-1;
-        }
-        else if(categories.Count == 0)
-        {
-            categoryDropdown.captionText.SetText("Please create a category");
+            categoryDropdown.captionText.SetText(categories[0].Name);
         }
     }
 

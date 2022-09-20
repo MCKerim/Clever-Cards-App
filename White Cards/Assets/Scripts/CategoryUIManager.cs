@@ -13,6 +13,17 @@ public class CategoryUIManager : MonoBehaviour
     private void OnEnable()
     {
         UpdateCategoryUI();
+        CardManager.OnCategorysChanged += UpdateCategoryUI;
+    }
+
+    private void OnDisable() {
+        CardManager.OnCategorysChanged -= UpdateCategoryUI;
+    }
+
+    public void UpdateCategoryUI()
+    {
+        DestroyAllCategoryButtons();
+        InstantiateAllCategoryButtons();
     }
 
     private void InstantiateAllCategoryButtons()
@@ -32,12 +43,11 @@ public class CategoryUIManager : MonoBehaviour
         rt.sizeDelta = new Vector2(rt.sizeDelta.x, (categories.Count) * spaceBetween + spaceAtEnd);
     }
 
-    public void UpdateCategoryUI()
+    private void DestroyAllCategoryButtons()
     {
         foreach (Transform child in contentTransform)
         {
             Destroy(child.gameObject);
         }
-        InstantiateAllCategoryButtons();
     }
 }

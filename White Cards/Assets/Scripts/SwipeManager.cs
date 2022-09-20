@@ -52,9 +52,6 @@ public class SwipeManager : MonoBehaviour
             }
             else if(t.phase == TouchPhase.Ended)
             {
-                StopCoroutine(UpdateTrail());
-                trail.SetActive(false);
-
                 touchEndPos = t.position;
                 touchEndTime = Time.realtimeSinceStartup;
 
@@ -67,6 +64,8 @@ public class SwipeManager : MonoBehaviour
                     else
                     {
                         StopCoroutine(UpdateTrail());
+                        trail.SetActive(false);
+                        
                         GameObject.FindObjectOfType<CardUIManager>().Turn();
                     }
                 }
@@ -81,7 +80,7 @@ public class SwipeManager : MonoBehaviour
         trail.SetActive(true);
         float time = 0f;
 
-        while(true){
+        while(time <= maxSwipeTime){
             touches = Input.touches;
             if(touches.Length > 0){
                 pos = Camera.main.ScreenToWorldPoint(touches[0].position);

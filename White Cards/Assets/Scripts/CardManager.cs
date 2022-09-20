@@ -28,6 +28,7 @@ public class CardManager : MonoBehaviour
 
     [SerializeField] private GameObject importErrorPanel;
     [SerializeField] private TextMeshProUGUI importErrorText;
+    [SerializeField] private CreateCardManager createCardManager;
 
     // Start is called before the first frame update
     void Awake()
@@ -128,7 +129,13 @@ public class CardManager : MonoBehaviour
             return;
         }
         uIManager.HideGameUI();
-        uIManager.ShowEditCardUI();
+        createCardManager.StartEditingCurrentCard();
+    }
+
+    public void StartCreatingNewCard()
+    {
+        uIManager.HideGameUI();
+        createCardManager.StartCreatingNewCard();
     }
 
     public void NextGameMode()
@@ -181,12 +188,14 @@ public class CardManager : MonoBehaviour
             return null;
         }
 
+        if(counterForInOrderMode >= currentCardSet.Count)
+        {
+            counterForInOrderMode = 0;
+        }
+
         Card nextCard = currentCardSet[counterForInOrderMode];
 
         counterForInOrderMode++;
-        if(counterForInOrderMode >= currentCardSet.Count){
-            counterForInOrderMode = 0;
-        }
         return nextCard;
     }
 
@@ -251,6 +260,12 @@ public class CardManager : MonoBehaviour
         return sum;
     } 
 
+    public void AddCardToCurrentCategory(Card newCard)
+    {
+        currentCardSet.Add(newCard);
+        SetCurrentCard(newCard);
+    }
+
     public void SaveCard(Card card, Category category)
     {
         List<Card> cardsOfCategory =  LoadCardsOfCategoryFromFile(category);
@@ -268,6 +283,12 @@ public class CardManager : MonoBehaviour
         currentCardSet.Remove(currentCard);
         currentCard = GetNextCard(currentGameMode);
         cardUIManager.MoveCardRight(currentCard);
+    }
+
+    public void SetCurrentCard(Card card)
+    {
+        currentCard = card;
+        UpdateCurrentCardUI();
     }
 
     public void UpdateCurrentCardUI()
@@ -295,19 +316,77 @@ public class CardManager : MonoBehaviour
     }
 
     private Category categorySelectedToDelete;
-    [SerializeField] private GameObject confirmCategoryDeletionPanel;
+    [SerializeField] private GameObject confirmCategoryDeletionPopup;
     [SerializeField] private TextMeshProUGUI confirmCategoryDeletionText;
-    public void ShowConfirmDeleteCategoryPanel(Category category)
+    public void ShowConfirmDeleteCategoryPopup(Category category)
     {
         categorySelectedToDelete = category;
-        confirmCategoryDeletionPanel.SetActive(true);
+        confirmCategoryDeletionPopup.SetActive(true);
         confirmCategoryDeletionText.SetText("Sure you want to delete category: " + category.Name + "?");
     }
 
-    public void HideConfirmDeleteCategoryPanel()
+    public void HideConfirmDeleteCategoryPopup()
     {
         categorySelectedToDelete = null;
-        confirmCategoryDeletionPanel.SetActive(false);
+        confirmCategoryDeletionPopup.SetActive(false);
+    }
+
+    [SerializeField] private GameObject createCategoryPopup;
+    [SerializeField] private TMP_InputField createCategoryPopupInputField;
+    private Category currentEditedCategory = null;
+
+    public delegate void CategoryUpdateAction();
+    public static event CategoryUpdateAction OnCategorysChanged;
+
+    public void CreateCategoryButtonClicked()
+    {
+        createCategoryPopup.SetActive(true);
+    }
+
+    public void EditCategoryNameButtonClicked(Category category)
+    {
+        currentEditedCategory = category;
+        createCategoryPopup.SetActive(true);
+        createCategoryPopupInputField.text = currentEditedCategory.Name;
+    }
+
+    public void CategoryPopupConfirmButtonClicked()
+    {
+        string categoryName = createCategoryPopupInputField.text;
+        if(categoryName == ""){
+            return;
+        }
+        createCategoryPopupInputField.text = "";
+
+        if(currentEditedCategory == null)
+        {
+            Category category = new Category(Guid.NewGuid(), categoryName);
+            SaveCategory(category);
+        }
+        else
+        {
+            currentEditedCategory.Name = categoryName;
+            SaveCategories();
+            currentEditedCategory = null;
+        }
+        
+        if(OnCategorysChanged != null){
+            OnCategorysChanged();
+        }
+
+        HideCreateCategoryPopup();
+    }
+
+    public void CategoryPopupCancelButtonClicked()
+    {
+        currentEditedCategory = null;
+        createCategoryPopupInputField.text = "";
+        HideCreateCategoryPopup();
+    }
+
+    private void HideCreateCategoryPopup()
+    {
+        createCategoryPopup.SetActive(false);
     }
 
     public void DeleteSelectedCategory()
@@ -325,7 +404,7 @@ public class CardManager : MonoBehaviour
         }
         SaveCategories();
         GameObject.FindObjectOfType<CategoryUIManager>().UpdateCategoryUI();
-        HideConfirmDeleteCategoryPanel();
+        HideConfirmDeleteCategoryPopup();
     }
 
     private void OnApplicationQuit()
