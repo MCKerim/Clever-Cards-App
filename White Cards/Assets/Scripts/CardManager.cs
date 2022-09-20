@@ -177,7 +177,6 @@ public class CardManager : MonoBehaviour
                 Debug.LogError("Game Mode not implemented.");
             break;
         }
-
         return nextCard;
     }
 
