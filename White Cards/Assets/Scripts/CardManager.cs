@@ -29,6 +29,8 @@ public class CardManager : MonoBehaviour
     [SerializeField] private GameObject importErrorPanel;
     [SerializeField] private TextMeshProUGUI importErrorText;
     [SerializeField] private CreateCardManager createCardManager;
+    [SerializeField] private GameObject categorySettingsPopup;
+
 
     // Start is called before the first frame update
     void Awake()
@@ -44,8 +46,6 @@ public class CardManager : MonoBehaviour
 
         currentCategory = category;
         currentCardSet = LoadCardsOfCategoryFromFile(currentCategory);
-
-        counterForInOrderMode = 0;
 
         currentCard = GetNextCard(currentGameMode);
         cardUIManager.ShowFirstCard(currentCard);
@@ -155,6 +155,8 @@ public class CardManager : MonoBehaviour
     {
         currentGameMode = gameMode;
         currentGameModeText.SetText(currentGameMode + " Mode");
+
+        counterForInOrderMode = 0;
     }
 
     public Card GetNextCard(GameMode mode)
@@ -312,6 +314,16 @@ public class CardManager : MonoBehaviour
     {
         categories.Add(newCategory);
         SaveCategories();
+    }
+
+    public void ShowCategorySettingsPopup()
+    {
+        categorySettingsPopup.SetActive(true);
+    }
+
+    public void HideCategorySettingsPopup()
+    {
+        categorySettingsPopup.SetActive(false);
     }
 
     private Category categorySelectedToDelete;
@@ -510,7 +522,7 @@ public class CardManager : MonoBehaviour
         stream.Close();
 
         new NativeShare().AddFile( path )
-		.SetSubject( category.Name + " Category" ).SetText( "Import this file in White Cards App to learn with it!" ).SetUrl( "https://MCKerim.com" )
+		.SetSubject( category.Name + " Category" ).SetText( "Import this file in the White Cards App to start learning!" ).SetUrl( "https://MCKerim.com" )
 		.SetCallback( ( result, shareTarget ) => 
         {
             Debug.Log("Share result: " + result + ", selected app: " + shareTarget);
@@ -522,7 +534,7 @@ public class CardManager : MonoBehaviour
     internal void PermissionCallbacks_PermissionDeniedAndDontAskAgain(string permissionName)
     {
         importErrorPanel.SetActive(true);
-        importErrorText.SetText("Please give this app permission to read files. We cannot ask again.");
+        importErrorText.SetText("Please give this app permission to read files.");
     }
 
     internal void PermissionCallbacks_PermissionGranted(string permissionName)
@@ -585,11 +597,13 @@ public class CardManager : MonoBehaviour
                 stream.Close();
             }catch(Exception e){
                 importErrorPanel.SetActive(true);
-                importErrorText.SetText("Please select another file. " + e.Message);
+                importErrorText.SetText("Something went wrong while loading this file. Please select another File. " + e.Message);
                 stream.Close();
                 return;
             }
             if(shareableCategoryData == null){
+                importErrorPanel.SetActive(true);
+                importErrorText.SetText("Something went wrong while loading this file. Please select another file or try again.");
                 return;
             }
 

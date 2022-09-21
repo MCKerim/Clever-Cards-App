@@ -28,6 +28,9 @@ public class CardUIManager : MonoBehaviour
     public void ShowCardWithoutAnim(Card card)
     {
         currentCard = card;
+        if(currentCard == null){
+            currentCard = new Card("Press + to add cards to this category.\nPress X to delete a card.\nPress the gearwheel to edit a card.\nTap for more information.", "Swipe left if a card was easy.\nSwipe down if it was medium.\nSwipe to the right if it was hard.", null, null, 0, new System.Guid());
+        }
         UpdatePointsUI();
         ShowQuestion();
     }
@@ -77,7 +80,7 @@ public class CardUIManager : MonoBehaviour
     private void MoveCardBackToMiddel()
     {
         if(currentCard == null){
-            currentCard = new Card("No Cards in this Category.", "This is a test card. Please create your own cards in the Create Card menu.", null, null, 0, new System.Guid());
+            currentCard = new Card("Press + to add cards to this category.\nPress X to delete a card.\nPress the gearwheel to edit a card.\nTap for more information.", "Swipe left if a card was easy.\nSwipe down if it was medium.\nSwipe to the right if it was hard.", null, null, 0, new System.Guid());
         }
         UpdatePointsUI();
         ShowQuestion();
