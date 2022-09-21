@@ -4563,6 +4563,7 @@ GameObject:
   - component: {fileID: 1096001304}
   - component: {fileID: 1096001303}
   - component: {fileID: 1096001302}
+  - component: {fileID: 1096001305}
   m_Layer: 0
   m_Name: Cancel Button
   m_TagString: Untagged
@@ -4684,6 +4685,20 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &1096001305
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1096001300}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a64be5dac609b7469359e88a76747f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isDisabled: 0
+  disableWhileActive: {fileID: 0}
 --- !u!1 &1147193572
 GameObject:
   m_ObjectHideFlags: 0
@@ -5259,7 +5274,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -75, y: 350}
+  m_AnchoredPosition: {x: -74.999985, y: 350}
   m_SizeDelta: {x: -150, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1270049079
@@ -5368,6 +5383,7 @@ GameObject:
   - component: {fileID: 1300035382}
   - component: {fileID: 1300035381}
   - component: {fileID: 1300035380}
+  - component: {fileID: 1300035383}
   m_Layer: 0
   m_Name: Create Category Popup Holder
   m_TagString: Untagged
@@ -5490,6 +5506,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1300035378}
   m_CullTransparentMesh: 1
+--- !u!114 &1300035383
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1300035378}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a64be5dac609b7469359e88a76747f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isDisabled: 0
+  disableWhileActive: {fileID: 1096001305}
 --- !u!1 &1301276285
 GameObject:
   m_ObjectHideFlags: 0
@@ -7278,11 +7308,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1685506637}
   m_CullTransparentMesh: 1
---- !u!224 &1686617792 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 1994515865535238774, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-  m_PrefabInstance: {fileID: 4336999352388265464}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1687258581
 GameObject:
   m_ObjectHideFlags: 0
@@ -8055,7 +8080,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -75, y: -150}
+  m_AnchoredPosition: {x: -74.999985, y: -150}
   m_SizeDelta: {x: -150, y: 50}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1897171221
@@ -8719,6 +8744,7 @@ GameObject:
   - component: {fileID: 2072940272}
   - component: {fileID: 2072940271}
   - component: {fileID: 2072940270}
+  - component: {fileID: 2072940273}
   m_Layer: 0
   m_Name: Confirm Category Deletion Popup Holder
   m_TagString: Untagged
@@ -8841,6 +8867,20 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2072940268}
   m_CullTransparentMesh: 1
+--- !u!114 &2072940273
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2072940268}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a64be5dac609b7469359e88a76747f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isDisabled: 0
+  disableWhileActive: {fileID: 0}
 --- !u!1 &2139892937
 GameObject:
   m_ObjectHideFlags: 0
@@ -8930,6 +8970,7 @@ GameObject:
   - component: {fileID: 525866912395017343}
   - component: {fileID: 8113691713290790462}
   - component: {fileID: 2641691253630853455}
+  - component: {fileID: 8527975016231030561}
   m_Layer: 0
   m_Name: Main Menu Button
   m_TagString: Untagged
@@ -9034,7 +9075,7 @@ PrefabInstance:
       objectReference: {fileID: 21300000, guid: af19b810ad81d8741ba1583f72a9d93c, type: 3}
     - target: {fileID: 3866398743105581338, guid: f7702d99720817143b66cffb0e3e5edc, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: -157.5
+      value: -157.49998
       objectReference: {fileID: 0}
     - target: {fileID: 3866398743130598466, guid: f7702d99720817143b66cffb0e3e5edc, type: 3}
       propertyPath: m_Name
@@ -9137,86 +9178,10 @@ PrefabInstance:
       propertyPath: trail
       value: 
       objectReference: {fileID: 655960917}
-    - target: {fileID: 1073331729136688254, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: debugtext
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1073331729136688254, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1073331729136688254, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: marginTop
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1073331729136688254, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: marginLeft
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1073331729136688254, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: maxTapTime
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1073331729136688254, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: marginRight
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1073331729136688254, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: marginBottom
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 1073331729136688254, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: maxSwipeTime
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1073331729136688254, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: rectTransform
-      value: 
-      objectReference: {fileID: 1463879173306915081}
-    - target: {fileID: 1073331729136688254, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: minSwipeDistance
-      value: 0.5
-      objectReference: {fileID: 0}
-    - target: {fileID: 1073331729136688254, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: cardRectTransform
-      value: 
-      objectReference: {fileID: 1463879173306915081}
-    - target: {fileID: 1073331729136688254, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: settingsRectTransform
-      value: 
-      objectReference: {fileID: 1686617792}
-    - target: {fileID: 1542126611479937859, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.size
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 1542126611479937859, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Mode
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 1542126611479937859, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1885447770}
-    - target: {fileID: 1542126611479937859, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
-      value: 
-      objectReference: {fileID: 0}
-    - target: {fileID: 1542126611479937859, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_CallState
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 1542126611479937859, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_MethodName
-      value: UpdateEditCardUI
-      objectReference: {fileID: 0}
-    - target: {fileID: 1542126611479937859, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_TargetAssemblyTypeName
-      value: CreateCardManager, Assembly-CSharp
-      objectReference: {fileID: 0}
-    - target: {fileID: 1542126611479937859, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Arguments.m_ObjectArgumentAssemblyTypeName
-      value: UnityEngine.Object, UnityEngine
-      objectReference: {fileID: 0}
     - target: {fileID: 2909505355341806833, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
       propertyPath: m_Pivot.x
       value: 0.5
@@ -9302,25 +9267,17 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 3188361901078631253, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: c
-      value: 
-      objectReference: {fileID: 600051024}
-    - target: {fileID: 3188361901078631253, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: panel
+      propertyPath: rateCardVisualPanel
       value: 
       objectReference: {fileID: 600051025}
+    - target: {fileID: 3188361901078631253, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
+      propertyPath: rateCardVisualcanvasGroup
+      value: 
+      objectReference: {fileID: 600051024}
     - target: {fileID: 4336999352863155184, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1885447770}
-    - target: {fileID: 4655052065896941320, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: m_Enabled
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 6532558089634654400, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
-      propertyPath: m_AnchoredPosition.y
-      value: 62.5
-      objectReference: {fileID: 0}
     - target: {fileID: 6804922983390240305, guid: 0e6b63fc3165c8547bbcd32050bafaa8, type: 3}
       propertyPath: m_Name
       value: Card UI
@@ -9377,3 +9334,17 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 320}
   m_SizeDelta: {x: 125, y: 125}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &8527975016231030561
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2641691253630853454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9a64be5dac609b7469359e88a76747f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  isDisabled: 0
+  disableWhileActive: {fileID: 0}
