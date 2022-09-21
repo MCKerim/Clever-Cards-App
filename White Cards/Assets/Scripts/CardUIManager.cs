@@ -35,7 +35,7 @@ public class CardUIManager : MonoBehaviour
     public void ShowFirstCard(Card card)
     {
         currentCard = card;
-        MoveCardBack();
+        MoveCardBackToMiddel();
     }
 
     [SerializeField] private Image rateCardVisualPanel;
@@ -55,25 +55,26 @@ public class CardUIManager : MonoBehaviour
     public void MoveCardLeft(Card card)
     {
         currentCard = card;
-        LeanTween.moveLocalX(gameObject, -1000, 0.25f).setOnComplete(MoveCardBack);
+        LeanTween.moveLocalX(gameObject, -1000, 0.25f).setOnComplete(MoveCardBackToMiddel);
         PlayRateCardEffect(easyColor);
     }
 
     public void MoveCardRight(Card card)
     {
         currentCard = card;
-        LeanTween.moveLocalX(gameObject, 1000, 0.25f).setOnComplete(MoveCardBack);
+        LeanTween.moveLocalX(gameObject, 1000, 0.25f).setOnComplete(MoveCardBackToMiddel);
         PlayRateCardEffect(hardColor);
     }
 
     public void MoveCardDown(Card card)
     {
         currentCard = card;
-        LeanTween.moveLocalY(gameObject, -1500, 0.25f).setOnComplete(MoveCardBack);
+        LeanTween.moveLocalY(gameObject, -1500, 0.25f).setOnComplete(MoveCardBackToMiddel);
         PlayRateCardEffect(mediumColor);
     }
+    [SerializeField] AnimationCurve cardAnimCurve;
 
-    private void MoveCardBack()
+    private void MoveCardBackToMiddel()
     {
         if(currentCard == null){
             currentCard = new Card("No Cards in this Category.", "This is a test card. Please create your own cards in the Create Card menu.", null, null, 0, new System.Guid());
@@ -83,7 +84,7 @@ public class CardUIManager : MonoBehaviour
 
         gameObject.transform.localPosition = startPos;
         LeanTween.moveLocalX(gameObject, -1000, 0);
-        LeanTween.moveLocalX(gameObject, 0, 0.25f);
+        LeanTween.moveLocalX(gameObject, 0, 0.25f).setEase(cardAnimCurve);
     }
 
     private void UpdatePointsUI()
