@@ -130,7 +130,7 @@ public class SwipeManager : MonoBehaviour
         settingsRectTransform.GetWorldCorners(settingsRectCorners);
         float settingsHeight = settingsRectCorners[1].y - settingsRectCorners[0].y;
 
-        bottomLeftCorner.y += settingsHeight * 1.5f;
+        bottomLeftCorner.y += settingsHeight * 3.5f;
     }
 
     #if UNITY_EDITOR
