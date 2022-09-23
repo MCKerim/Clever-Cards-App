@@ -17,6 +17,10 @@ public class CardUIManager : MonoBehaviour
     [SerializeField] private RawImage questionRawImage;
     [SerializeField] private TMP_InputField notesInputField;
 
+    [SerializeField] private Image favoriteButtonImage;
+    [SerializeField] private Sprite isFavoriteSprite;
+    [SerializeField] private Sprite isNotFavoriteSprite;
+
     private Card currentCard;
 
     private bool showsQuestion;
@@ -85,6 +89,7 @@ public class CardUIManager : MonoBehaviour
         }
 
         notesInputField.SetTextWithoutNotify("");
+        UpdateFavoriteButton();
         UpdatePointsUI();
         ShowQuestion();
 
@@ -107,6 +112,24 @@ public class CardUIManager : MonoBehaviour
         else
         {
             hardnesBar.color = easyColor;
+        }
+    }
+
+    private void UpdateFavoriteButton()
+    {
+        favoriteButtonImage.sprite = isNotFavoriteSprite;
+    }
+
+    public void FavoriteButtonPressed(bool changeToFavorite)
+    {
+        if(changeToFavorite)
+        {
+            //Change current card to Favorite
+            favoriteButtonImage.sprite = isFavoriteSprite;
+        }
+        else
+        {
+            favoriteButtonImage.sprite = isNotFavoriteSprite;
         }
     }
 
