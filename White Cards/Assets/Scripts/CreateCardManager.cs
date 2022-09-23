@@ -84,9 +84,14 @@ public class CreateCardManager : MonoBehaviour
         currentImageAsBytesAnswear = null;
     }
 
+    private bool IsValidInput()
+    {
+        return !(questionInputField.text == "" && answearInputField.text == "" && currentImageAsBytesQuestion == null && currentImageAsBytesAnswear == null) && categories.Count != 0;
+    }
+
     public void SaveCard()
     {
-        if (questionInputField.text == "" || answearInputField.text == "" || categories.Count == 0)
+        if (!IsValidInput())
         {
             return;
         }
