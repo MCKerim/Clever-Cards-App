@@ -30,6 +30,7 @@ public class CardManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI importErrorText;
     [SerializeField] private CreateCardManager createCardManager;
     [SerializeField] private GameObject categorySettingsPopup;
+    [SerializeField] private TextMeshProUGUI currentCategoryText;
 
 
     // Start is called before the first frame update
@@ -45,6 +46,7 @@ public class CardManager : MonoBehaviour
         uIManager.ShowGameUI();
 
         currentCategory = category;
+        currentCategoryText.SetText(currentCategory.Name);
         currentCardSet = LoadCardsOfCategoryFromFile(currentCategory);
 
         currentCard = GetNextCard(currentGameMode);
