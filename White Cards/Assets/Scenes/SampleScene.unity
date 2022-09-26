@@ -9721,7 +9721,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &2060379124
 RectTransform:
   m_ObjectHideFlags: 0
@@ -10416,6 +10416,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.x
       value: -157.5
       objectReference: {fileID: 0}
+    - target: {fileID: 3866398743105581349, guid: f7702d99720817143b66cffb0e3e5edc, type: 3}
+      propertyPath: m_text
+      value: Category 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3866398743105581349, guid: f7702d99720817143b66cffb0e3e5edc, type: 3}
+      propertyPath: m_fontSize
+      value: 100
+      objectReference: {fileID: 0}
+    - target: {fileID: 3866398743105581349, guid: f7702d99720817143b66cffb0e3e5edc, type: 3}
+      propertyPath: m_fontAsset
+      value: 
+      objectReference: {fileID: 11400000, guid: 072d1916b6e923240a1d73bfed3a7e77, type: 2}
+    - target: {fileID: 3866398743105581349, guid: f7702d99720817143b66cffb0e3e5edc, type: 3}
+      propertyPath: m_sharedMaterial
+      value: 
+      objectReference: {fileID: 5143448648131644581, guid: 072d1916b6e923240a1d73bfed3a7e77, type: 2}
     - target: {fileID: 3866398743130598466, guid: f7702d99720817143b66cffb0e3e5edc, type: 3}
       propertyPath: m_Name
       value: Select Category Button
