@@ -151,6 +151,9 @@ public class CardManager : MonoBehaviour
         }
 
         SelectGameMode((GameMode) currentEnumValue);
+
+        currentCard = GetNextCard(currentGameMode);
+        cardUIManager.ShowCardWithoutAnim(currentCard);
     }
 
     private void SelectGameMode(GameMode gameMode)
@@ -175,6 +178,10 @@ public class CardManager : MonoBehaviour
 
             case GameMode.InOrder:
                 nextCard = GetNextCardInOrderMode();
+            break;
+
+            case GameMode.Hard:
+                nextCard = GetNextCardHardMode();
             break;
 
             default:
@@ -208,10 +215,40 @@ public class CardManager : MonoBehaviour
             return null;
         }
 
+        return GetDifferentRandomCardFromList(currentCardSet);
+    }
+
+    private Card GetNextCardHardMode()
+    {
+        if(currentCardSet.Count == 0){
+            return null;
+        }
+
+        List<Card> hardCards = new List<Card>();
+        foreach(Card c in currentCardSet){
+            if(c.CurrentPoints >= 70)
+            {
+                hardCards.Add(c);
+            }
+        }
+
+        if(hardCards.Count == 0){
+            return new Card("No Hard rated cards in this deck.", "Please choose another mode.", null, null, 100, Guid.Empty);
+        }
+
+        return GetDifferentRandomCardFromList(hardCards);
+    }
+
+    private Card GetDifferentRandomCardFromList(List<Card> cards)
+    {
+        if(cards.Count == 0){
+            return null;
+        }
+
         Card nextCard;
         do{
-            nextCard = GetRandomCardFromList(currentCardSet);
-        }while(nextCard.Equals(currentCard));
+            nextCard = GetRandomCardFromList(cards);
+        }while(nextCard.Equals(currentCard) && cards.Count > 1);
 
         return nextCard;
     }
@@ -235,7 +272,7 @@ public class CardManager : MonoBehaviour
         Card nextCard;
         do{
             nextCard = GetRandomCardFromListBasedOfChance(currentCardSet);
-        }while (currentCardSet.Count >= 2 && nextCard.Equals(currentCard));
+        }while (currentCardSet.Count > 1 && nextCard.Equals(currentCard));
         return nextCard;
     }
 

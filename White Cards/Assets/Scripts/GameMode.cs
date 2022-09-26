@@ -2,5 +2,6 @@ public enum GameMode
 {
     Smart,
     Random,
-    InOrder
+    InOrder,
+    Hard
 }
