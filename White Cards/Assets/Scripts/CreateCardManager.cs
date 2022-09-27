@@ -24,6 +24,8 @@ public class CreateCardManager : MonoBehaviour
     private Card currentEditedCard = null;
     [SerializeField] private GameObject createCardPanel;
 
+    [SerializeField] private GameObject cardSavedPopup;
+
     private void Start() {
         uIManager = GameObject.FindObjectOfType<UIManager>();
     }
@@ -118,6 +120,8 @@ public class CreateCardManager : MonoBehaviour
             {
                 cardManager.SaveCard(newCard, selectedCategory);
             }
+
+            PlayCardSavedAnim();
         }
         else
         {
@@ -143,6 +147,18 @@ public class CreateCardManager : MonoBehaviour
 
             CancelButtonClicked();
         }
+    }
+
+    private void PlayCardSavedAnim()
+    {
+        cardSavedPopup.SetActive(true);
+        LeanTween.scale(cardSavedPopup, new Vector3(0, 0, 0), 0);
+        LeanTween.scale(cardSavedPopup, new Vector3(1, 1, 1), 0.4f).setOnComplete(CardSavedAnimStep2).setEaseOutBack();
+    }
+
+    private void CardSavedAnimStep2()
+    {
+        LeanTween.scale(cardSavedPopup, new Vector3(0, 0, 0), 0.25f).setDelay(0.15f).setOnComplete(() => cardSavedPopup.SetActive(false)).setEaseInCirc();
     }
 
     public void UpdateCategoryDropdownAndSelectLast()

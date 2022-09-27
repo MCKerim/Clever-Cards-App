@@ -140,6 +140,22 @@ public class CardManager : MonoBehaviour
         createCardManager.StartCreatingNewCard();
     }
 
+    public void PreviousGameMode()
+    {
+        GameMode[] gameModes = (GameMode[])Enum.GetValues(typeof(GameMode));
+
+        int currentEnumValue = (int) currentGameMode;
+        currentEnumValue--;
+        if(currentEnumValue < 0){
+            currentEnumValue = gameModes.Length-1;
+        }
+
+        SelectGameMode((GameMode) currentEnumValue);
+
+        currentCard = GetNextCard(currentGameMode);
+        cardUIManager.ShowCardWithoutAnim(currentCard);
+    }
+
     public void NextGameMode()
     {
         GameMode[] gameModes = (GameMode[])Enum.GetValues(typeof(GameMode));
