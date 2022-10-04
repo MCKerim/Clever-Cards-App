@@ -8,6 +8,7 @@ using TMPro;
 using NativeShareNamespace;
 using NativeFilePickerNamespace;
 using UnityEngine.Android;
+using UnityEngine.UI;
 
 public class CardManager : MonoBehaviour
 {
@@ -25,13 +26,18 @@ public class CardManager : MonoBehaviour
 
     [SerializeField] private TextMeshProUGUI currentGameModeText;
     private GameMode currentGameMode;
+    private bool onlyFavorites;
 
     [SerializeField] private GameObject importErrorPanel;
     [SerializeField] private TextMeshProUGUI importErrorText;
     [SerializeField] private CreateCardManager createCardManager;
     [SerializeField] private GameObject categorySettingsPopup;
-    [SerializeField] private TextMeshProUGUI currentCategoryText;
+    [SerializeField] private TextMeshProUGUI onlyFavoritesToggleText;
+    [SerializeField] private Image onlyFavoritesToggleBackground;
+    [SerializeField] private Color onlyFavoritesActiveColor;
+    [SerializeField] private Color onlyFavoritesDeactiveColor;
 
+    [SerializeField] private TextMeshProUGUI currentCategoryText;
 
     // Start is called before the first frame update
     void Awake()
@@ -140,6 +146,25 @@ public class CardManager : MonoBehaviour
         createCardManager.StartCreatingNewCard();
     }
 
+    public void SetOnlyFavorites(bool onlyFavorites)
+    {
+        this.onlyFavorites = onlyFavorites;
+        
+        if(onlyFavorites)
+        {
+            onlyFavoritesToggleText.color = onlyFavoritesActiveColor;
+            onlyFavoritesToggleBackground.color = onlyFavoritesActiveColor;
+        }
+        else
+        {
+            onlyFavoritesToggleText.color = onlyFavoritesDeactiveColor;
+            onlyFavoritesToggleBackground.color = onlyFavoritesDeactiveColor;
+        }
+
+        currentCard = GetNextCard(currentGameMode);
+        cardUIManager.ShowCardWithoutAnim(currentCard);
+    }
+
     public void PreviousGameMode()
     {
         GameMode[] gameModes = (GameMode[])Enum.GetValues(typeof(GameMode));
@@ -183,21 +208,36 @@ public class CardManager : MonoBehaviour
     public Card GetNextCard(GameMode mode)
     {
         Card nextCard = null;
+        List<Card> cardSet = currentCardSet;
+
+        if(onlyFavorites)
+        {
+            List<Card> onlyFavoriteCards = new List<Card>();
+            foreach(Card c in cardSet)
+            {
+                if(c.IsFavorite)
+                {
+                    onlyFavoriteCards.Add(c);
+                }
+            }
+            cardSet = onlyFavoriteCards;
+        }
+
         switch(mode){
             case GameMode.Smart:
-                nextCard = GetNextCardSmartMode();
+                nextCard = GetNextCardSmartMode(cardSet);
             break;
             
             case GameMode.Random:
-                nextCard = GetNextCardRandomMode();
+                nextCard = GetNextCardRandomMode(cardSet);
             break;
 
             case GameMode.InOrder:
-                nextCard = GetNextCardInOrderMode();
+                nextCard = GetNextCardInOrderMode(cardSet);
             break;
 
             case GameMode.Hard:
-                nextCard = GetNextCardHardMode();
+                nextCard = GetNextCardHardMode(cardSet);
             break;
 
             default:
@@ -208,40 +248,40 @@ public class CardManager : MonoBehaviour
     }
 
     int counterForInOrderMode = 0;
-    private Card GetNextCardInOrderMode()
+    private Card GetNextCardInOrderMode(List<Card> cardSet)
     {
-        if(currentCardSet.Count == 0){
+        if(cardSet.Count == 0){
             return null;
         }
 
-        if(counterForInOrderMode >= currentCardSet.Count)
+        if(counterForInOrderMode >= cardSet.Count)
         {
             counterForInOrderMode = 0;
         }
 
-        Card nextCard = currentCardSet[counterForInOrderMode];
+        Card nextCard = cardSet[counterForInOrderMode];
 
         counterForInOrderMode++;
         return nextCard;
     }
 
-    private Card GetNextCardRandomMode()
+    private Card GetNextCardRandomMode(List<Card> cardSet)
     {
-        if(currentCardSet.Count == 0){
+        if(cardSet.Count == 0){
             return null;
         }
 
-        return GetDifferentRandomCardFromList(currentCardSet);
+        return GetDifferentRandomCardFromList(cardSet);
     }
 
-    private Card GetNextCardHardMode()
+    private Card GetNextCardHardMode(List<Card> cardSet)
     {
-        if(currentCardSet.Count == 0){
+        if(cardSet.Count == 0){
             return null;
         }
 
         List<Card> hardCards = new List<Card>();
-        foreach(Card c in currentCardSet){
+        foreach(Card c in cardSet){
             if(c.CurrentPoints >= 70)
             {
                 hardCards.Add(c);
@@ -249,7 +289,7 @@ public class CardManager : MonoBehaviour
         }
 
         if(hardCards.Count == 0){
-            return new Card("No Hard rated cards in this deck.", "Please choose another mode.", null, null, 100, Guid.Empty);
+            return new Card("No Hard rated cards in this deck.", "Please choose another mode.", null, null, 100, Guid.Empty, false);
         }
 
         return GetDifferentRandomCardFromList(hardCards);
@@ -279,26 +319,26 @@ public class CardManager : MonoBehaviour
         return cards[randomIndex];
     }
 
-    private Card GetNextCardSmartMode()
+    private Card GetNextCardSmartMode(List<Card> cardSet)
     {
-        if(currentCardSet.Count == 0){
+        if(cardSet.Count == 0){
             return null;
         }
 
         Card nextCard;
         do{
-            nextCard = GetRandomCardFromListBasedOfChance(currentCardSet);
-        }while (currentCardSet.Count > 1 && nextCard.Equals(currentCard));
+            nextCard = GetRandomCardFromListBasedOfChance(cardSet);
+        }while (cardSet.Count > 1 && nextCard.Equals(cardSet));
         return nextCard;
     }
 
-    private Card GetRandomCardFromListBasedOfChance(List<Card> cards)
+    private Card GetRandomCardFromListBasedOfChance(List<Card> cardSet)
     {
-        int sum = SumPoints(cards);
+        int sum = SumPoints(cardSet);
         int randomChance = UnityEngine.Random.Range(0, sum);
 
         float currentChance = 0;
-        foreach (Card c in cards)
+        foreach (Card c in cardSet)
         {
             currentChance += c.CurrentPoints;
             if (currentChance >= randomChance)
@@ -309,10 +349,10 @@ public class CardManager : MonoBehaviour
         return null;
     }
 
-    private int SumPoints(List<Card> cards)
+    private int SumPoints(List<Card> cardSet)
     {
         int sum = 0;
-        cards.ForEach(c => sum += c.CurrentPoints);
+        cardSet.ForEach(c => sum += c.CurrentPoints);
         return sum;
     } 
 
@@ -667,7 +707,7 @@ public class CardManager : MonoBehaviour
 
             List<Card> cleanCards = new List<Card>();
             foreach(Card c in shareableCategoryData.cards){
-                Card card = new Card(c.Question, c.Answear, c.ImageBytesQuestion, c.ImageBytesAnswear, startpointsForCard, newCategory.Uuid);
+                Card card = new Card(c.Question, c.Answear, c.ImageBytesQuestion, c.ImageBytesAnswear, startpointsForCard, newCategory.Uuid, c.IsFavorite);
                 cleanCards.Add(card);
             }
             SaveCardsOfCategory(newCategory, cleanCards);

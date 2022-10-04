@@ -14,8 +14,9 @@ public class Card
     private byte[] imageBytesAnswear;
     private int currentPoints;
     private Guid categoryUuid;
+    private bool isFavorite;
 
-    public Card(string question, string answear, byte[] imageBytesQuestion, byte[] imageBytesAnswear, int currentPoints, Guid categoryID)
+    public Card(string question, string answear, byte[] imageBytesQuestion, byte[] imageBytesAnswear, int currentPoints, Guid categoryID, bool isFavorite)
     {
         this.uuid = Guid.NewGuid();
         this.question = question;
@@ -35,6 +36,7 @@ public class Card
 
         this.currentPoints = currentPoints;
         this.categoryUuid = categoryID;
+        this.isFavorite = isFavorite;
     }
 
     public Guid Uuid { get => uuid; }
@@ -44,6 +46,7 @@ public class Card
     public byte[] ImageBytesAnswear { get => imageBytesAnswear; set => imageBytesAnswear = value; }
     public int CurrentPoints { get => currentPoints; set => currentPoints = value; }
     public Guid CategoryUuid { get => categoryUuid; set => categoryUuid = value; }
+    public bool IsFavorite { get => isFavorite; set => isFavorite = value; }
 
     public override bool Equals(object obj)
     {

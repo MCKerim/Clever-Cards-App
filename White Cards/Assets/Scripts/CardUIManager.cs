@@ -17,6 +17,7 @@ public class CardUIManager : MonoBehaviour
     [SerializeField] private RawImage questionRawImage;
     [SerializeField] private TMP_InputField notesInputField;
 
+    [SerializeField] private Toggle favoriteToggle;
     [SerializeField] private Image favoriteButtonImage;
     [SerializeField] private Sprite isFavoriteSprite;
     [SerializeField] private Sprite isNotFavoriteSprite;
@@ -34,8 +35,9 @@ public class CardUIManager : MonoBehaviour
     {
         currentCard = card;
         if(currentCard == null){
-            currentCard = new Card("Press + to add cards to this category.\nPress X to delete a card.\nPress the gearwheel to edit a card.\nTap for more information.", "Swipe left if a card was easy.\nSwipe down if it was medium.\nSwipe to the right if it was hard.", null, null, 0, new System.Guid());
+            currentCard = new Card("Press + to add cards to this category.\nPress X to delete a card.\nPress the gearwheel to edit a card.\nTap for more information.", "Swipe left if a card was easy.\nSwipe down if it was medium.\nSwipe to the right if it was hard.", null, null, 0, new System.Guid(), false);
         }
+        UpdateFavoriteButton();
         UpdatePointsUI();
         ShowQuestion();
     }
@@ -85,7 +87,7 @@ public class CardUIManager : MonoBehaviour
     private void MoveCardBackToMiddel()
     {
         if(currentCard == null){
-            currentCard = new Card("Press + to add cards to this category.\nPress X to delete a card.\nPress the gearwheel to edit a card.\nTap for more information.", "Swipe left if a card was easy.\nSwipe down if it was medium.\nSwipe to the right if it was hard.", null, null, 0, new System.Guid());
+            currentCard = new Card("Press + to add cards to this category.\nPress X to delete a card.\nPress the gearwheel to edit a card.\nTap for more information.", "Swipe left if a card was easy.\nSwipe down if it was medium.\nSwipe to the right if it was hard.", null, null, 0, new System.Guid(), false);
         }
 
         notesInputField.SetTextWithoutNotify("");
@@ -117,20 +119,21 @@ public class CardUIManager : MonoBehaviour
 
     private void UpdateFavoriteButton()
     {
-        favoriteButtonImage.sprite = isNotFavoriteSprite;
-    }
-
-    public void FavoriteButtonPressed(bool changeToFavorite)
-    {
-        if(changeToFavorite)
+        favoriteToggle.isOn = currentCard.IsFavorite;
+        if(currentCard.IsFavorite)
         {
-            //Change current card to Favorite
             favoriteButtonImage.sprite = isFavoriteSprite;
         }
         else
         {
             favoriteButtonImage.sprite = isNotFavoriteSprite;
         }
+    }
+
+    public void FavoriteButtonPressed(bool changeToFavorite)
+    {
+        currentCard.IsFavorite = changeToFavorite;
+        UpdateFavoriteButton();
     }
 
     private void ShowQuestion()
