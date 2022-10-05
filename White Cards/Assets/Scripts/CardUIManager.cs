@@ -22,6 +22,8 @@ public class CardUIManager : MonoBehaviour
     [SerializeField] private Sprite isFavoriteSprite;
     [SerializeField] private Sprite isNotFavoriteSprite;
 
+    private CardManager cardManager;
+
     private Card currentCard;
 
     private bool showsQuestion;
@@ -29,6 +31,10 @@ public class CardUIManager : MonoBehaviour
     private Vector3 startPos;
     private void OnEnable() {
         startPos = transform.localPosition;
+    }
+
+    private void Start() {
+        cardManager = GameObject.FindObjectOfType<CardManager>();
     }
 
     public void ShowCardWithoutAnim(Card card)
@@ -133,6 +139,7 @@ public class CardUIManager : MonoBehaviour
     public void FavoriteButtonPressed(bool changeToFavorite)
     {
         currentCard.IsFavorite = changeToFavorite;
+        cardManager.CurrentCardFavoriteStatusWasUpdated();
         UpdateFavoriteButton();
     }
 

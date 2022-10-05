@@ -15,8 +15,8 @@ public class CardManager : MonoBehaviour
     private Card currentCard;
     private Category currentCategory;
 
-    private List<Card> currentCardSet;
-    private List<Card> filteredCardSet;
+    private List<Card> currentCardSet = new List<Card>();
+    private List<Card> filteredCardSet = new List<Card>();
 
     [SerializeField] private List<Category> categories;
 
@@ -28,6 +28,8 @@ public class CardManager : MonoBehaviour
     private GameMode currentGameMode;
     private bool onlyFavorites;
     private bool filterCardsWithTags;
+    private List<String> allTags;
+    private List<String> activeTags = new List<string>();
 
     [SerializeField] private GameObject importErrorPanel;
     [SerializeField] private TextMeshProUGUI importErrorText;
@@ -44,7 +46,10 @@ public class CardManager : MonoBehaviour
     void Awake()
     {
         categories = LoadCategoriesFromFile();
-        SelectGameMode(GameMode.Smart);
+        currentGameMode = GameMode.Smart;
+        currentGameModeText.SetText(currentGameMode + " Mode");
+
+        counterForInOrderMode = 0;
     }
 
     public void SelectCategory(Category category)
@@ -80,8 +85,12 @@ public class CardManager : MonoBehaviour
             return;
         }
 
-        if(currentGameMode == GameMode.Smart){
+        if(currentGameMode == GameMode.Smart || currentGameMode == GameMode.Hard){
             RateCard(-10, currentCard);
+            if(currentGameMode == GameMode.Hard && currentCard.CurrentPoints < 70)
+            {
+                filteredCardSet.Remove(currentCard);
+            }
         }
 
         currentCard = GetNextCard(currentGameMode);
@@ -95,7 +104,7 @@ public class CardManager : MonoBehaviour
             return;
         }
 
-        if(currentGameMode == GameMode.Smart){
+        if(currentGameMode == GameMode.Smart || currentGameMode == GameMode.Hard){
             RateCard(0, currentCard);
         }
 
@@ -110,7 +119,7 @@ public class CardManager : MonoBehaviour
             return;
         }
 
-        if(currentGameMode == GameMode.Smart){
+        if(currentGameMode == GameMode.Smart || currentGameMode == GameMode.Hard){
             RateCard(10, currentCard);
         }
         
@@ -213,7 +222,8 @@ public class CardManager : MonoBehaviour
 
     private void PrepareFilteredCardSet()
     {
-        filteredCardSet = currentCardSet;
+        filteredCardSet.Clear();
+        filteredCardSet.AddRange(currentCardSet);
 
         if(onlyFavorites)
         {
@@ -222,10 +232,29 @@ public class CardManager : MonoBehaviour
 
         if(filterCardsWithTags)
         {
-            filteredCardSet = FilterCardSetTags(filteredCardSet, new List<String>());
+            filteredCardSet = FilterCardSetTags(filteredCardSet, activeTags);
         }
 
         filteredCardSet = FilterCardSetGameMode(filteredCardSet, currentGameMode);
+    }
+
+    public void CurrentCardFavoriteStatusWasUpdated()
+    {
+        if(onlyFavorites)
+        {
+            filteredCardSet.Remove(currentCard);
+        }
+    }
+
+    public void CurrentCardsTagsWhereUpdated()
+    {
+        if (filterCardsWithTags)
+        {
+            if (!currentCard.HasTag(activeTags))
+            {
+                filteredCardSet.Remove(currentCard);
+            }
+        }
     }
 
     private List<Card> FilterCardSetFavorites(List<Card> cardSetToFilter)
