@@ -12,11 +12,11 @@ using UnityEngine.UI;
 
 public class CardManager : MonoBehaviour
 {
-    public int startpointsForCard;
     private Card currentCard;
     private Category currentCategory;
 
     private List<Card> currentCardSet;
+    private List<Card> filteredCardSet;
 
     [SerializeField] private List<Category> categories;
 
@@ -27,6 +27,7 @@ public class CardManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI currentGameModeText;
     private GameMode currentGameMode;
     private bool onlyFavorites;
+    private bool filterCardsWithTags;
 
     [SerializeField] private GameObject importErrorPanel;
     [SerializeField] private TextMeshProUGUI importErrorText;
@@ -55,6 +56,8 @@ public class CardManager : MonoBehaviour
         currentCategoryText.SetText(currentCategory.Name);
         currentCardSet = LoadCardsOfCategoryFromFile(currentCategory);
 
+        PrepareFilteredCardSet();
+
         currentCard = GetNextCard(currentGameMode);
         cardUIManager.ShowFirstCard(currentCard);
     }
@@ -63,8 +66,9 @@ public class CardManager : MonoBehaviour
     {
         foreach(Card c in currentCardSet)
         {
-            c.CurrentPoints = startpointsForCard;
+            c.CurrentPoints = CardBuilder.startpointsForCard;
         }
+        PrepareFilteredCardSet();
         currentCard = GetNextCard(currentGameMode);
         cardUIManager.ShowCardWithoutAnim(currentCard);
     }
@@ -161,6 +165,7 @@ public class CardManager : MonoBehaviour
             onlyFavoritesToggleBackground.color = onlyFavoritesDeactiveColor;
         }
 
+        PrepareFilteredCardSet();
         currentCard = GetNextCard(currentGameMode);
         cardUIManager.ShowCardWithoutAnim(currentCard);
     }
@@ -203,41 +208,109 @@ public class CardManager : MonoBehaviour
         currentGameModeText.SetText(currentGameMode + " Mode");
 
         counterForInOrderMode = 0;
+        PrepareFilteredCardSet();
+    }
+
+    private void PrepareFilteredCardSet()
+    {
+        filteredCardSet = currentCardSet;
+
+        if(onlyFavorites)
+        {
+            filteredCardSet = FilterCardSetFavorites(filteredCardSet);
+        }
+
+        if(filterCardsWithTags)
+        {
+            filteredCardSet = FilterCardSetTags(filteredCardSet, new List<String>());
+        }
+
+        filteredCardSet = FilterCardSetGameMode(filteredCardSet, currentGameMode);
+    }
+
+    private List<Card> FilterCardSetFavorites(List<Card> cardSetToFilter)
+    {
+        List<Card> onlyFavoriteCards = new List<Card>();
+        foreach (Card c in cardSetToFilter)
+        {
+            if (c.IsFavorite)
+            {
+                onlyFavoriteCards.Add(c);
+            }
+        }
+        return onlyFavoriteCards;
+    }
+
+    private List<Card> FilterCardSetTags(List<Card> cardSetToFilter, List<String> activeTags)
+    {
+        List<Card> onlyCardsWithTag = new List<Card>();
+
+        if(activeTags.Count == 0)
+        {
+            return onlyCardsWithTag;
+        }
+
+        foreach (Card c in cardSetToFilter)
+        {
+            if (c.HasTag(activeTags))
+            {
+                onlyCardsWithTag.Add(c);
+            }
+        }
+        return onlyCardsWithTag;
+    }
+
+    private List<Card> FilterCardSetGameMode(List<Card> cardSetToFilter, GameMode mode)
+    {
+        switch (mode){
+            case GameMode.Hard:
+                List<Card> onlyHardCards = new List<Card>();
+                foreach (Card c in cardSetToFilter)
+                {
+                    if (c.CurrentPoints >= 70)
+                    {
+                        onlyHardCards.Add(c);
+                    }
+                }
+                return onlyHardCards;
+            default:
+                    return cardSetToFilter;
+        }
     }
 
     public Card GetNextCard(GameMode mode)
     {
         Card nextCard = null;
-        List<Card> cardSet = currentCardSet;
-
-        if(onlyFavorites)
+        if(currentCardSet.Count == 0)
         {
-            List<Card> onlyFavoriteCards = new List<Card>();
-            foreach(Card c in cardSet)
-            {
-                if(c.IsFavorite)
-                {
-                    onlyFavoriteCards.Add(c);
-                }
-            }
-            cardSet = onlyFavoriteCards;
+            return null;
         }
 
+        if(filteredCardSet.Count == 0){
+            if(onlyFavorites){
+                return CardBuilder.InfoCard("There are no favorite cards in this category.", "Please toggle 'ONLY FAVORITES' in the settings menu off.");
+            }
+            else if(filterCardsWithTags)
+            {
+                return CardBuilder.InfoCard("There are no cards with these tags in this category.", "Please select other tags.");
+            }
+        }
+       
         switch(mode){
             case GameMode.Smart:
-                nextCard = GetNextCardSmartMode(cardSet);
+                nextCard = GetNextCardSmartMode(filteredCardSet);
             break;
             
             case GameMode.Random:
-                nextCard = GetNextCardRandomMode(cardSet);
+                nextCard = GetNextCardRandomMode(filteredCardSet);
             break;
 
             case GameMode.InOrder:
-                nextCard = GetNextCardInOrderMode(cardSet);
+                nextCard = GetNextCardInOrderMode(filteredCardSet);
             break;
 
             case GameMode.Hard:
-                nextCard = GetNextCardHardMode(cardSet);
+                nextCard = GetNextCardHardMode(filteredCardSet);
             break;
 
             default:
@@ -277,22 +350,10 @@ public class CardManager : MonoBehaviour
     private Card GetNextCardHardMode(List<Card> cardSet)
     {
         if(cardSet.Count == 0){
-            return null;
+            return CardBuilder.InfoCard("There are no 'HARD' rated cards in this category.", "Please choose another mode.");
         }
 
-        List<Card> hardCards = new List<Card>();
-        foreach(Card c in cardSet){
-            if(c.CurrentPoints >= 70)
-            {
-                hardCards.Add(c);
-            }
-        }
-
-        if(hardCards.Count == 0){
-            return new Card("No Hard rated cards in this deck.", "Please choose another mode.", null, null, 100, Guid.Empty, false);
-        }
-
-        return GetDifferentRandomCardFromList(hardCards);
+        return GetDifferentRandomCardFromList(cardSet);
     }
 
     private Card GetDifferentRandomCardFromList(List<Card> cards)
@@ -359,6 +420,7 @@ public class CardManager : MonoBehaviour
     public void AddCardToCurrentCategory(Card newCard)
     {
         currentCardSet.Add(newCard);
+        PrepareFilteredCardSet();
         SetCurrentCard(newCard);
     }
 
@@ -377,6 +439,7 @@ public class CardManager : MonoBehaviour
         }
 
         currentCardSet.Remove(currentCard);
+        filteredCardSet.Remove(currentCard);
         currentCard = GetNextCard(currentGameMode);
         cardUIManager.MoveCardRight(currentCard);
     }
@@ -702,15 +765,15 @@ public class CardManager : MonoBehaviour
                 return;
             }
 
-            Category newCategory = new Category(Guid.NewGuid(), shareableCategoryData.category.Name);
-            SaveCategory(newCategory);
+            Category sharebleCategory = new Category(Guid.NewGuid(), shareableCategoryData.category.Name);
+            SaveCategory(sharebleCategory);
 
-            List<Card> cleanCards = new List<Card>();
+            List<Card> sharebleCards = new List<Card>();
             foreach(Card c in shareableCategoryData.cards){
-                Card card = new Card(c.Question, c.Answear, c.ImageBytesQuestion, c.ImageBytesAnswear, startpointsForCard, newCategory.Uuid, c.IsFavorite);
-                cleanCards.Add(card);
+                Card sharebleCard = CardBuilder.CopyCardToShare(c, sharebleCategory.Uuid);
+                sharebleCards.Add(sharebleCard);
             }
-            SaveCardsOfCategory(newCategory, cleanCards);
+            SaveCardsOfCategory(sharebleCategory, sharebleCards);
             GameObject.FindObjectOfType<CategoryUIManager>().UpdateCategoryUI();
         }
         else

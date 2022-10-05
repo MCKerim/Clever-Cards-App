@@ -35,7 +35,7 @@ public class CardUIManager : MonoBehaviour
     {
         currentCard = card;
         if(currentCard == null){
-            currentCard = new Card("Press + to add cards to this category.\nPress X to delete a card.\nPress the gearwheel to edit a card.\nTap for more information.", "Swipe left if a card was easy.\nSwipe down if it was medium.\nSwipe to the right if it was hard.", null, null, 0, new System.Guid(), false);
+            currentCard = CardBuilder.BasicInfoCard();
         }
         UpdateFavoriteButton();
         UpdatePointsUI();
@@ -87,7 +87,7 @@ public class CardUIManager : MonoBehaviour
     private void MoveCardBackToMiddel()
     {
         if(currentCard == null){
-            currentCard = new Card("Press + to add cards to this category.\nPress X to delete a card.\nPress the gearwheel to edit a card.\nTap for more information.", "Swipe left if a card was easy.\nSwipe down if it was medium.\nSwipe to the right if it was hard.", null, null, 0, new System.Guid(), false);
+            currentCard = CardBuilder.BasicInfoCard();
         }
 
         notesInputField.SetTextWithoutNotify("");

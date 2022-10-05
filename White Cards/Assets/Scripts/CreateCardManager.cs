@@ -107,7 +107,7 @@ public class CreateCardManager : MonoBehaviour
 
         if(currentEditedCard == null)
         {
-            Card newCard = new Card(question, answear, currentImageAsBytesQuestion, currentImageAsBytesAnswear, cardManager.startpointsForCard, selectedCategory.Uuid, false);
+            Card newCard = CardBuilder.NewCard(question, answear, currentImageAsBytesQuestion, currentImageAsBytesAnswear, selectedCategory.Uuid);
             
             currentImageAsBytesQuestion = null;
             currentImageAsBytesAnswear = null;
