@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
+using UnityEngine.UI;
 
 public class CategoryButtonManager : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI nameText;
+    [SerializeField] private Image colorImage;
 
     private Category category;
-
     private CardManager cardManager;
 
     private void Start()
@@ -20,6 +21,7 @@ public class CategoryButtonManager : MonoBehaviour
     {
         this.category = category;
         nameText.SetText(category.Name);
+        colorImage.color = category.Color;
     }
 
     public void Select()
@@ -34,7 +36,7 @@ public class CategoryButtonManager : MonoBehaviour
 
     public void EditThisCategory()
     {
-        cardManager.EditCategoryNameButtonClicked(category);
+        cardManager.EditCategoryButtonClicked(category);
     }
 
     public void ShareThisCategory()

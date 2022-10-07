@@ -552,6 +552,7 @@ public class CardManager : MonoBehaviour
 
     [SerializeField] private GameObject createCategoryPopup;
     [SerializeField] private TMP_InputField createCategoryPopupInputField;
+    [SerializeField] private ColorButtonsManager createCategoryColorSelection;
     private Category currentEditedCategory = null;
 
     public delegate void CategoryUpdateAction();
@@ -562,11 +563,12 @@ public class CardManager : MonoBehaviour
         createCategoryPopup.SetActive(true);
     }
 
-    public void EditCategoryNameButtonClicked(Category category)
+    public void EditCategoryButtonClicked(Category category)
     {
         currentEditedCategory = category;
         createCategoryPopup.SetActive(true);
         createCategoryPopupInputField.text = currentEditedCategory.Name;
+        createCategoryColorSelection.SelectButton(currentEditedCategory.Color);
     }
 
     public void CategoryPopupConfirmButtonClicked()
@@ -579,12 +581,13 @@ public class CardManager : MonoBehaviour
 
         if(currentEditedCategory == null)
         {
-            Category category = new Category(Guid.NewGuid(), categoryName, new List<string>());
+            Category category = new Category(Guid.NewGuid(), categoryName, createCategoryColorSelection.GetSelectedColor(), new List<string>());
             SaveCategory(category);
         }
         else
         {
             currentEditedCategory.Name = categoryName;
+            currentEditedCategory.Color = createCategoryColorSelection.GetSelectedColor();
             SaveCategories();
             currentEditedCategory = null;
         }
@@ -640,7 +643,7 @@ public class CardManager : MonoBehaviour
     }
 
     public void SaveCurrentCardSet(){
-        if(currentCardSet != null){
+        if(currentCategory != null && currentCardSet != null){
             SaveCardsOfCategory(currentCategory, currentCardSet);
         }
     }
@@ -815,7 +818,7 @@ public class CardManager : MonoBehaviour
                 return;
             }
 
-            Category sharebleCategory = new Category(Guid.NewGuid(), shareableCategoryData.category.Name, shareableCategoryData.category.Tags);
+            Category sharebleCategory = new Category(Guid.NewGuid(), shareableCategoryData.category.Name, shareableCategoryData.category.Color, shareableCategoryData.category.Tags);
             SaveCategory(sharebleCategory);
 
             List<Card> sharebleCards = new List<Card>();
