@@ -28,7 +28,6 @@ public class CardManager : MonoBehaviour
     private GameMode currentGameMode;
     private bool onlyFavorites;
     private bool filterCardsWithTags;
-    private List<String> allTags;
     private List<String> activeTags = new List<string>();
 
     [SerializeField] private GameObject importErrorPanel;
@@ -37,8 +36,10 @@ public class CardManager : MonoBehaviour
     [SerializeField] private GameObject categorySettingsPopup;
     [SerializeField] private TextMeshProUGUI onlyFavoritesToggleText;
     [SerializeField] private Image onlyFavoritesToggleBackground;
-    [SerializeField] private Color onlyFavoritesActiveColor;
-    [SerializeField] private Color onlyFavoritesDeactiveColor;
+    [SerializeField] private TextMeshProUGUI filterCardsWithTagsToggleText;
+    [SerializeField] private Image filterCardsWithTagsToggleBackground;
+    [SerializeField] private Color toggleActiveColor;
+    [SerializeField] private Color toggleDeactiveColor;
 
     [SerializeField] private TextMeshProUGUI currentCategoryText;
 
@@ -165,13 +166,33 @@ public class CardManager : MonoBehaviour
         
         if(onlyFavorites)
         {
-            onlyFavoritesToggleText.color = onlyFavoritesActiveColor;
-            onlyFavoritesToggleBackground.color = onlyFavoritesActiveColor;
+            onlyFavoritesToggleText.color = toggleActiveColor;
+            onlyFavoritesToggleBackground.color = toggleActiveColor;
         }
         else
         {
-            onlyFavoritesToggleText.color = onlyFavoritesDeactiveColor;
-            onlyFavoritesToggleBackground.color = onlyFavoritesDeactiveColor;
+            onlyFavoritesToggleText.color = toggleDeactiveColor;
+            onlyFavoritesToggleBackground.color = toggleDeactiveColor;
+        }
+
+        PrepareFilteredCardSet();
+        currentCard = GetNextCard(currentGameMode);
+        cardUIManager.ShowCardWithoutAnim(currentCard);
+    }
+
+    public void SetFilterCardsWithTags(bool filterCardsWithTags)
+    {
+        this.filterCardsWithTags = filterCardsWithTags;
+        
+        if(filterCardsWithTags)
+        {
+            filterCardsWithTagsToggleText.color = toggleActiveColor;
+            filterCardsWithTagsToggleBackground.color = toggleActiveColor;
+        }
+        else
+        {
+            filterCardsWithTagsToggleText.color = toggleDeactiveColor;
+            filterCardsWithTagsToggleBackground.color = toggleDeactiveColor;
         }
 
         PrepareFilteredCardSet();
@@ -558,7 +579,7 @@ public class CardManager : MonoBehaviour
 
         if(currentEditedCategory == null)
         {
-            Category category = new Category(Guid.NewGuid(), categoryName);
+            Category category = new Category(Guid.NewGuid(), categoryName, new List<string>());
             SaveCategory(category);
         }
         else
@@ -794,7 +815,7 @@ public class CardManager : MonoBehaviour
                 return;
             }
 
-            Category sharebleCategory = new Category(Guid.NewGuid(), shareableCategoryData.category.Name);
+            Category sharebleCategory = new Category(Guid.NewGuid(), shareableCategoryData.category.Name, shareableCategoryData.category.Tags);
             SaveCategory(sharebleCategory);
 
             List<Card> sharebleCards = new List<Card>();

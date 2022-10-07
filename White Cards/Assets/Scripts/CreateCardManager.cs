@@ -15,6 +15,7 @@ public class CreateCardManager : MonoBehaviour
     [SerializeField] private TMP_InputField answearInputField;
     [SerializeField] private TMP_Dropdown categoryDropdown;
     [SerializeField] private TextMeshProUGUI categoryLabelText;
+    [SerializeField] private TMP_Dropdown tagsDropdown;
 
     private byte[] currentImageAsBytesQuestion;
     private byte[] currentImageAsBytesAnswear;
@@ -46,6 +47,7 @@ public class CreateCardManager : MonoBehaviour
         currentEditedCard = cardManager.GetCurrentCard();
         UpdateCategoryDropdown();
         SelectCurrentCategory();
+        UpdateTagsDropdown();
         UpdateEditCardUI();
 
         CardManager.OnCategorysChanged += UpdateCategoryDropdownAndSelectLast;
@@ -184,6 +186,19 @@ public class CreateCardManager : MonoBehaviour
         if(categories.Count == 1)
         {
             categoryDropdown.captionText.SetText(categories[0].Name);
+        }
+    }
+
+    private void UpdateTagsDropdown()
+    {
+        int categoryDropdownValue = categoryDropdown.value;
+        Category selectedCategory = categories[categoryDropdownValue];
+        List<String> allTags = selectedCategory.Tags;
+
+        tagsDropdown.options.Clear();
+        foreach (String tag in allTags)
+        {
+            tagsDropdown.options.Add(new TMP_Dropdown.OptionData(){ text = tag});
         }
     }
 

@@ -39,11 +39,7 @@ public class Card
         this.categoryUuid = categoryID;
         this.isFavorite = isFavorite;
 
-        this.tags = new List<String>();
-        if(tags != null)
-        {
-            this.tags.AddRange(tags);
-        }
+        
     }
 
     public List<String> Tags { get => tags; set => tags = value; }
