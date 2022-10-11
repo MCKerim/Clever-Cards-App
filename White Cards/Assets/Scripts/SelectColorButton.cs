@@ -26,13 +26,13 @@ public class SelectColorButton : MonoBehaviour
     public void Select()
     {
         isSelected = true;
-        LeanTween.scale(gameObject, new Vector3(1.25f, 1.25f, 1), 0.25f);
+        LeanTween.scale(gameObject, new Vector3(1.25f, 1.25f, 1), 0.1f);
     }
 
     public void Deselect()
     {
         isSelected = false;
-        LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.25f);
+        LeanTween.scale(gameObject, new Vector3(1, 1, 1), 0.1f);
     }
 
     public Color GetColor()

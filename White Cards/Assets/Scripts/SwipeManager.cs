@@ -17,6 +17,7 @@ public class SwipeManager : MonoBehaviour
 
     [SerializeField] private float minSwipeDistance = 2f;
     private CardManager cardManager;
+    private CardUIManager cardUIManager;
 
     private Vector2 bottomLeftCorner;
     private Vector2 topRightCorner;
@@ -30,7 +31,7 @@ public class SwipeManager : MonoBehaviour
     void Start()
     {
         cardManager = GameObject.FindObjectOfType<CardManager>();
-
+        cardUIManager = GameObject.FindObjectOfType<CardUIManager>();
         UpdateTouchArea();
     }
 
@@ -63,12 +64,12 @@ public class SwipeManager : MonoBehaviour
                     if(touchEndTime - touchStartTime <= maxSwipeTime && distance >= minSwipeDistance){
                         CalculateSwipeDirection(touchStartPos, touchEndPos);
                     }
-                    else if(touchEndTime - touchStartTime <= maxTapTime &&CheckIfPointIsOnCard(Camera.main.ScreenToWorldPoint(touchEndPos)))
+                    else if(touchEndTime - touchStartTime <= maxTapTime && CheckIfPointIsOnCard(Camera.main.ScreenToWorldPoint(touchEndPos)))
                     {
                         StopCoroutine(UpdateTrail());
                         trail.SetActive(false);
 
-                        GameObject.FindObjectOfType<CardUIManager>().Turn();
+                        cardUIManager.Turn();
                     }
                 }
             }

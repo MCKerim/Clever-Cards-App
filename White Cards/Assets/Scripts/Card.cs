@@ -15,9 +15,9 @@ public class Card
     private int currentPoints;
     private Guid categoryUuid;
     private bool isFavorite;
-    private List<String> tags;
+    private List<Tag> tags;
 
-    public Card(string question, string answear, byte[] imageBytesQuestion, byte[] imageBytesAnswear, int currentPoints, Guid categoryID, bool isFavorite, List<String> tags)
+    public Card(string question, string answear, byte[] imageBytesQuestion, byte[] imageBytesAnswear, int currentPoints, Guid categoryID, bool isFavorite, List<Tag> tags)
     {
         this.uuid = Guid.NewGuid();
         this.question = question;
@@ -39,17 +39,20 @@ public class Card
         this.categoryUuid = categoryID;
         this.isFavorite = isFavorite;
 
-        
+        this.tags = new List<Tag>();
+        if(tags != null){
+            this.tags.AddRange(tags);
+        }
     }
 
-    public List<String> Tags { get => tags; set => tags = value; }
+    public List<Tag> Tags { get => tags; set => tags = value; }
 
-    public void AddTag(string tag)
+    public void AddTag(Tag tag)
     {
         tags.Add(tag);
     }
 
-    public bool HasTag(List<String> tagsToFilter)
+    public bool HasTag(List<Tag> tagsToFilter)
     {
         bool hasTag = false;
         tagsToFilter.ForEach(tag => {

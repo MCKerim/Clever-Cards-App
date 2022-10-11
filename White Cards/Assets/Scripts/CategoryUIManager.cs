@@ -8,6 +8,7 @@ public class CategoryUIManager : MonoBehaviour
     [SerializeField] private Transform contentTransform;
 
     [SerializeField] private CardManager cardManager;
+    [SerializeField] private float spaceAtStart;
     [SerializeField] private float spaceAtEnd;
 
     private void OnEnable()
@@ -36,7 +37,7 @@ public class CategoryUIManager : MonoBehaviour
         {
             CategoryButtonManager c = Instantiate(categoryButtonManagerPrefab, contentTransform);
             c.SetCategory(categories[i]);
-            c.transform.LeanSetLocalPosY(-(spaceBetween * i));
+            c.transform.LeanSetLocalPosY(-(spaceBetween * i + spaceAtStart));
         }
 
         RectTransform rt = contentTransform.GetComponent<RectTransform>();

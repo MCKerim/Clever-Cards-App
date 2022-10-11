@@ -1,8 +1,9 @@
 using System;
+using System.Collections.Generic;
 
 public static class CardBuilder
 {
-    public static int startpointsForCard;
+    public static int startpointsForCard = 50;
 
     public static Card InfoCard(string frontText, string backText)
     {
@@ -19,13 +20,13 @@ public static class CardBuilder
         return InfoCard("Press + to add cards to this category.\nPress X to delete a card.\nPress the gearwheel to edit a card.\nTap for more information.", "Swipe left if a card was easy.\nSwipe down if it was medium.\nSwipe to the right if it was hard.");
     }
 
-    public static Card NewCard(string question, string answear, byte[] imageBytesQuestion, byte[] imageBytesAnswear, Guid categoryID)
+    public static Card NewCard(string question, string answear, byte[] imageBytesQuestion, byte[] imageBytesAnswear, Guid categoryID, List<Tag> tags)
     {
-        return new Card(question, answear, imageBytesQuestion, imageBytesAnswear, startpointsForCard, categoryID, false, null);
+        return new Card(question, answear, imageBytesQuestion, imageBytesAnswear, startpointsForCard, categoryID, false, tags);
     }
 
     public static Card CopyCardToShare(Card c, Guid categoryUuid)
     {
-        return new Card(c.Question, c.Answear, c.ImageBytesQuestion, c.ImageBytesAnswear, startpointsForCard, categoryUuid, c.IsFavorite, null);
+        return new Card(c.Question, c.Answear, c.ImageBytesQuestion, c.ImageBytesAnswear, startpointsForCard, categoryUuid, c.IsFavorite, c.Tags);
     }
 }

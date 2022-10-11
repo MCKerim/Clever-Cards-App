@@ -28,7 +28,7 @@ public class CardManager : MonoBehaviour
     private GameMode currentGameMode;
     private bool onlyFavorites;
     private bool filterCardsWithTags;
-    private List<String> activeTags = new List<string>();
+    private List<Tag> activeTags = new List<Tag>();
 
     [SerializeField] private GameObject importErrorPanel;
     [SerializeField] private TextMeshProUGUI importErrorText;
@@ -49,8 +49,6 @@ public class CardManager : MonoBehaviour
         categories = LoadCategoriesFromFile();
         currentGameMode = GameMode.Smart;
         currentGameModeText.SetText(currentGameMode + " Mode");
-
-        counterForInOrderMode = 0;
     }
 
     public void SelectCategory(Category category)
@@ -236,8 +234,16 @@ public class CardManager : MonoBehaviour
     {
         currentGameMode = gameMode;
         currentGameModeText.SetText(currentGameMode + " Mode");
-
-        counterForInOrderMode = 0;
+        
+        if(gameMode == GameMode.InOrder){
+            counterForInOrderMode = 0;
+            cardNumberHolder.SetActive(true);
+            cardNumberText.SetText(0 + " / " + currentCardSet.Count);
+        }
+        else
+        {
+            cardNumberHolder.SetActive(false);
+        }
         PrepareFilteredCardSet();
     }
 
@@ -291,7 +297,7 @@ public class CardManager : MonoBehaviour
         return onlyFavoriteCards;
     }
 
-    private List<Card> FilterCardSetTags(List<Card> cardSetToFilter, List<String> activeTags)
+    private List<Card> FilterCardSetTags(List<Card> cardSetToFilter, List<Tag> activeTags)
     {
         List<Card> onlyCardsWithTag = new List<Card>();
 
@@ -383,6 +389,7 @@ public class CardManager : MonoBehaviour
         }
 
         Card nextCard = cardSet[counterForInOrderMode];
+        cardNumberText.SetText(counterForInOrderMode+1 + " / " + cardSet.Count);
 
         counterForInOrderMode++;
         return nextCard;
@@ -435,11 +442,10 @@ public class CardManager : MonoBehaviour
         if(cardSet.Count == 0){
             return null;
         }
-
         Card nextCard;
         do{
             nextCard = GetRandomCardFromListBasedOfChance(cardSet);
-        }while (cardSet.Count > 1 && nextCard.Equals(cardSet));
+        }while (nextCard.Equals(currentCard) && cardSet.Count > 1);
         return nextCard;
     }
 
@@ -553,6 +559,8 @@ public class CardManager : MonoBehaviour
     [SerializeField] private GameObject createCategoryPopup;
     [SerializeField] private TMP_InputField createCategoryPopupInputField;
     [SerializeField] private ColorButtonsManager createCategoryColorSelection;
+    [SerializeField] private GameObject cardNumberHolder;
+    [SerializeField] private TextMeshProUGUI cardNumberText;
     private Category currentEditedCategory = null;
 
     public delegate void CategoryUpdateAction();
@@ -581,7 +589,7 @@ public class CardManager : MonoBehaviour
 
         if(currentEditedCategory == null)
         {
-            Category category = new Category(Guid.NewGuid(), categoryName, createCategoryColorSelection.GetSelectedColor(), new List<string>());
+            Category category = new Category(Guid.NewGuid(), categoryName, createCategoryColorSelection.GetSelectedColor(), new List<Tag>());
             SaveCategory(category);
         }
         else
