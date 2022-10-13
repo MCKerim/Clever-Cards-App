@@ -41,7 +41,7 @@ public class CreateCardManager : MonoBehaviour
         UpdateCategoryDropdown();
         SelectCurrentCategory();
         UpdateCreateCardUI();
-        UpdateTagsDropdown();
+        PopulateTagsDropdown();
         
         CardManager.OnCategorysChanged += UpdateCategoryDropdownAndSelectLast;
     }
@@ -53,7 +53,7 @@ public class CreateCardManager : MonoBehaviour
         UpdateCategoryDropdown();
         SelectCurrentCategory();
         UpdateEditCardUI();
-        UpdateTagsDropdown();
+        PopulateTagsDropdown();
 
         CardManager.OnCategorysChanged += UpdateCategoryDropdownAndSelectLast;
     }
@@ -149,6 +149,7 @@ public class CreateCardManager : MonoBehaviour
             if(cardManager.GetCurrentCategory().Equals(selectedCategory))
             {
                 cardManager.UpdateCurrentCardUI();
+                cardManager.CurrentCardsTagsWhereUpdated();
             }
             else
             {
@@ -231,35 +232,25 @@ public class CreateCardManager : MonoBehaviour
     public void CreateTagPopupConfirmButtonPressed()
     {
         string newTagName = createTagInputField.text;
-        Debug.Log("Create Tag: "+ newTagName);
         if(newTagName == "")
         {
             return;
         }
 
-        Tag tag = new Tag(newTagName);
+        Tag newTag = new Tag(newTagName);
+
         Category selectedCategory = categories[categoryDropdown.value];
-        selectedCategory.AddTag(tag);
+        selectedCategory.AddTag(newTag);
+        cardManager.SaveCategories();
 
-        
-
-        UpdateTagsDropdown();
+        tagButtonsManager.AddTag(newTag);
 
         createTagInputField.text = "";
         HideCreateTagPopup();
     }
 
-    private void UpdateTagsDropdown()
+    private void PopulateTagsDropdown()
     {
-        /*Category selectedCategory = categories[categoryDropdown.value];
-        List<Tag> categoryTags = selectedCategory.Tags;
-
-        tagsDropdown.options.Clear();
-        foreach (Tag tag in categoryTags)
-        {
-            tagsDropdown.options.Add(new TMP_Dropdown.OptionData(){ text = tag.Name});
-        }*/
-
         Category selectedCategory = categories[categoryDropdown.value];
         if(currentEditedCard == null){
             tagButtonsManager.UpdateTagList(selectedCategory.Tags);

@@ -58,6 +58,6 @@ public class TagButton : MonoBehaviour
 
     public void Delete()
     {
-
+        tagButtonsManager.DeleteTag(tag);
     }
 }

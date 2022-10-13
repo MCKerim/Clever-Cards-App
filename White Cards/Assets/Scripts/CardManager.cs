@@ -34,6 +34,9 @@ public class CardManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI importErrorText;
     [SerializeField] private CreateCardManager createCardManager;
     [SerializeField] private GameObject categorySettingsPopup;
+    [SerializeField] private GameObject tagSettingsPopup;
+    [SerializeField] private TagButtonsManager tagButtonsManager;
+
     [SerializeField] private TextMeshProUGUI onlyFavoritesToggleText;
     [SerializeField] private Image onlyFavoritesToggleBackground;
     [SerializeField] private TextMeshProUGUI filterCardsWithTagsToggleText;
@@ -47,6 +50,7 @@ public class CardManager : MonoBehaviour
     void Awake()
     {
         categories = LoadCategoriesFromFile();
+
         currentGameMode = GameMode.Smart;
         currentGameModeText.SetText(currentGameMode + " Mode");
     }
@@ -61,7 +65,6 @@ public class CardManager : MonoBehaviour
         currentCardSet = LoadCardsOfCategoryFromFile(currentCategory);
 
         PrepareFilteredCardSet();
-
         currentCard = GetNextCard(currentGameMode);
         cardUIManager.ShowFirstCard(currentCard);
     }
@@ -245,6 +248,8 @@ public class CardManager : MonoBehaviour
             cardNumberHolder.SetActive(false);
         }
         PrepareFilteredCardSet();
+        currentCard = GetNextCard(currentGameMode);
+        cardUIManager.ShowCardWithoutAnim(currentCard);
     }
 
     private void PrepareFilteredCardSet()
@@ -267,7 +272,11 @@ public class CardManager : MonoBehaviour
 
     public void CurrentCardFavoriteStatusWasUpdated()
     {
-        if(onlyFavorites)
+        if(currentCard == null){
+            return;
+        }
+
+        if(onlyFavorites && !currentCard.IsFavorite)
         {
             filteredCardSet.Remove(currentCard);
         }
@@ -275,6 +284,10 @@ public class CardManager : MonoBehaviour
 
     public void CurrentCardsTagsWhereUpdated()
     {
+        if(currentCard == null){
+            return;
+        }
+        
         if (filterCardsWithTags)
         {
             if (!currentCard.HasTag(activeTags))
@@ -487,6 +500,31 @@ public class CardManager : MonoBehaviour
         SaveCardsOfCategory(category, cardsOfCategory);
     }
 
+    public void DeleteTagFromCurrentCategory(Tag tag)
+    {
+        currentCategory.DeleteTag(tag);
+        foreach(Card c in currentCardSet){
+            c.RemoveTag(tag);
+        }
+    }
+
+    public void ShowTagSettingsPopup()
+    {
+        tagSettingsPopup.SetActive(true);
+        tagButtonsManager.UpdateTagList(currentCategory.Tags);
+        tagButtonsManager.SetSelectedTags(activeTags);
+    }
+
+    public void HideTagSettingsPopup()
+    {
+        activeTags = tagButtonsManager.GetSelectedTags();
+        PrepareFilteredCardSet();
+        currentCard = GetNextCard(currentGameMode);
+        cardUIManager.ShowCardWithoutAnim(currentCard);
+        
+        tagSettingsPopup.SetActive(false);
+    }
+
     public void DeleteCurrentCard()
     {
         if(currentCard == null)
@@ -657,7 +695,6 @@ public class CardManager : MonoBehaviour
     }
 
     public void SaveCategories(){
-        Debug.Log("Try to save Categories..");
         BinaryFormatter formatter = new BinaryFormatter();
 
         string path = Application.persistentDataPath + "/categories.MCKerimData";
@@ -671,7 +708,6 @@ public class CardManager : MonoBehaviour
     }
 
     private void SaveCardsOfCategory(Category category, List<Card> cards){
-        Debug.Log("Try to save Cards of a Category..");
         BinaryFormatter formatter = new BinaryFormatter();
 
         string path = Application.persistentDataPath + "/" + category.Uuid + ".MCKerimData";

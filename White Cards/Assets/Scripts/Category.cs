@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 
-[Serializable]
+[System.Serializable]
 public class Category
 {
     private Guid uuid;
@@ -31,6 +31,11 @@ public class Category
     public void AddTag(Tag tag)
     {
         tags.Add(tag);
+    }
+
+    public void DeleteTag(Tag tag)
+    {
+        tags.Remove(tag);
     }
 
     public override bool Equals(object obj)

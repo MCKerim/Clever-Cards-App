@@ -52,6 +52,11 @@ public class Card
         tags.Add(tag);
     }
 
+    public void RemoveTag(Tag tag)
+    {
+        tags.Remove(tag);
+    }
+
     public bool HasTag(List<Tag> tagsToFilter)
     {
         bool hasTag = false;
