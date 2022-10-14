@@ -1,4 +1,4 @@
-public enum GameMode
+public enum GameModeEnum
 {
     Smart,
     Random,

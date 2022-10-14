@@ -24,8 +24,8 @@ public class CardManager : MonoBehaviour
 
     [SerializeField] private UIManager uIManager;
 
-    [SerializeField] private TextMeshProUGUI currentGameModeText;
-    private GameMode currentGameMode;
+    [SerializeField] private TextMeshProUGUI currentGameModeEnumText;
+    private GameModeEnum currentGameModeEnum;
     private bool onlyFavorites;
     private bool filterCardsWithTags;
     private List<Tag> activeTags = new List<Tag>();
@@ -51,8 +51,8 @@ public class CardManager : MonoBehaviour
     {
         categories = LoadCategoriesFromFile();
 
-        currentGameMode = GameMode.Smart;
-        currentGameModeText.SetText(currentGameMode + " Mode");
+        currentGameModeEnum = GameModeEnum.Smart;
+        currentGameModeEnumText.SetText(currentGameModeEnum + " Mode");
     }
 
     public void SelectCategory(Category category)
@@ -65,7 +65,7 @@ public class CardManager : MonoBehaviour
         currentCardSet = LoadCardsOfCategoryFromFile(currentCategory);
 
         PrepareFilteredCardSet();
-        currentCard = GetNextCard(currentGameMode);
+        currentCard = GetNextCard(currentGameModeEnum);
         cardUIManager.ShowFirstCard(currentCard);
     }
 
@@ -76,7 +76,7 @@ public class CardManager : MonoBehaviour
             c.CurrentPoints = CardBuilder.startpointsForCard;
         }
         PrepareFilteredCardSet();
-        currentCard = GetNextCard(currentGameMode);
+        currentCard = GetNextCard(currentGameModeEnum);
         cardUIManager.ShowCardWithoutAnim(currentCard);
     }
 
@@ -87,15 +87,15 @@ public class CardManager : MonoBehaviour
             return;
         }
 
-        if(currentGameMode == GameMode.Smart || currentGameMode == GameMode.Hard){
+        if(currentGameModeEnum == GameModeEnum.Smart || currentGameModeEnum == GameModeEnum.Hard){
             RateCard(-10, currentCard);
-            if(currentGameMode == GameMode.Hard && currentCard.CurrentPoints < 70)
+            if(currentGameModeEnum == GameModeEnum.Hard && currentCard.CurrentPoints < 70)
             {
                 filteredCardSet.Remove(currentCard);
             }
         }
 
-        currentCard = GetNextCard(currentGameMode);
+        currentCard = GetNextCard(currentGameModeEnum);
         cardUIManager.MoveCardLeft(currentCard);
     }
 
@@ -106,11 +106,11 @@ public class CardManager : MonoBehaviour
             return;
         }
 
-        if(currentGameMode == GameMode.Smart || currentGameMode == GameMode.Hard){
+        if(currentGameModeEnum == GameModeEnum.Smart || currentGameModeEnum == GameModeEnum.Hard){
             RateCard(0, currentCard);
         }
 
-        currentCard = GetNextCard(currentGameMode);
+        currentCard = GetNextCard(currentGameModeEnum);
         cardUIManager.MoveCardDown(currentCard);
     }
 
@@ -121,11 +121,11 @@ public class CardManager : MonoBehaviour
             return;
         }
 
-        if(currentGameMode == GameMode.Smart || currentGameMode == GameMode.Hard){
+        if(currentGameModeEnum == GameModeEnum.Smart || currentGameModeEnum == GameModeEnum.Hard){
             RateCard(10, currentCard);
         }
         
-        currentCard = GetNextCard(currentGameMode);
+        currentCard = GetNextCard(currentGameModeEnum);
         cardUIManager.MoveCardRight(currentCard);
     }
 
@@ -177,7 +177,7 @@ public class CardManager : MonoBehaviour
         }
 
         PrepareFilteredCardSet();
-        currentCard = GetNextCard(currentGameMode);
+        currentCard = GetNextCard(currentGameModeEnum);
         cardUIManager.ShowCardWithoutAnim(currentCard);
     }
 
@@ -197,48 +197,48 @@ public class CardManager : MonoBehaviour
         }
 
         PrepareFilteredCardSet();
-        currentCard = GetNextCard(currentGameMode);
+        currentCard = GetNextCard(currentGameModeEnum);
         cardUIManager.ShowCardWithoutAnim(currentCard);
     }
 
-    public void PreviousGameMode()
+    public void PreviousGameModeEnum()
     {
-        GameMode[] gameModes = (GameMode[])Enum.GetValues(typeof(GameMode));
+        GameModeEnum[] GameModeEnums = (GameModeEnum[])Enum.GetValues(typeof(GameModeEnum));
 
-        int currentEnumValue = (int) currentGameMode;
+        int currentEnumValue = (int) currentGameModeEnum;
         currentEnumValue--;
         if(currentEnumValue < 0){
-            currentEnumValue = gameModes.Length-1;
+            currentEnumValue = GameModeEnums.Length-1;
         }
 
-        SelectGameMode((GameMode) currentEnumValue);
+        SelectGameModeEnum((GameModeEnum) currentEnumValue);
 
-        currentCard = GetNextCard(currentGameMode);
+        currentCard = GetNextCard(currentGameModeEnum);
         cardUIManager.ShowCardWithoutAnim(currentCard);
     }
 
-    public void NextGameMode()
+    public void NextGameModeEnum()
     {
-        GameMode[] gameModes = (GameMode[])Enum.GetValues(typeof(GameMode));
+        GameModeEnum[] GameModeEnums = (GameModeEnum[])Enum.GetValues(typeof(GameModeEnum));
 
-        int currentEnumValue = (int) currentGameMode;
+        int currentEnumValue = (int) currentGameModeEnum;
         currentEnumValue++;
-        if(currentEnumValue >= gameModes.Length){
+        if(currentEnumValue >= GameModeEnums.Length){
             currentEnumValue = 0;
         }
 
-        SelectGameMode((GameMode) currentEnumValue);
+        SelectGameModeEnum((GameModeEnum) currentEnumValue);
 
-        currentCard = GetNextCard(currentGameMode);
+        currentCard = GetNextCard(currentGameModeEnum);
         cardUIManager.ShowCardWithoutAnim(currentCard);
     }
 
-    private void SelectGameMode(GameMode gameMode)
+    private void SelectGameModeEnum(GameModeEnum GameModeEnum)
     {
-        currentGameMode = gameMode;
-        currentGameModeText.SetText(currentGameMode + " Mode");
+        currentGameModeEnum = GameModeEnum;
+        currentGameModeEnumText.SetText(currentGameModeEnum + " Mode");
         
-        if(gameMode == GameMode.InOrder){
+        if(GameModeEnum == GameModeEnum.InOrder){
             counterForInOrderMode = 0;
             cardNumberHolder.SetActive(true);
             cardNumberText.SetText(0 + " / " + currentCardSet.Count);
@@ -248,7 +248,7 @@ public class CardManager : MonoBehaviour
             cardNumberHolder.SetActive(false);
         }
         PrepareFilteredCardSet();
-        currentCard = GetNextCard(currentGameMode);
+        currentCard = GetNextCard(currentGameModeEnum);
         cardUIManager.ShowCardWithoutAnim(currentCard);
     }
 
@@ -267,7 +267,7 @@ public class CardManager : MonoBehaviour
             filteredCardSet = FilterCardSetTags(filteredCardSet, activeTags);
         }
 
-        filteredCardSet = FilterCardSetGameMode(filteredCardSet, currentGameMode);
+        filteredCardSet = FilterCardSetGameModeEnum(filteredCardSet, currentGameModeEnum);
     }
 
     public void CurrentCardFavoriteStatusWasUpdated()
@@ -329,10 +329,10 @@ public class CardManager : MonoBehaviour
         return onlyCardsWithTag;
     }
 
-    private List<Card> FilterCardSetGameMode(List<Card> cardSetToFilter, GameMode mode)
+    private List<Card> FilterCardSetGameModeEnum(List<Card> cardSetToFilter, GameModeEnum mode)
     {
         switch (mode){
-            case GameMode.Hard:
+            case GameModeEnum.Hard:
                 List<Card> onlyHardCards = new List<Card>();
                 foreach (Card c in cardSetToFilter)
                 {
@@ -347,7 +347,7 @@ public class CardManager : MonoBehaviour
         }
     }
 
-    public Card GetNextCard(GameMode mode)
+    public Card GetNextCard(GameModeEnum mode)
     {
         Card nextCard = null;
         if(currentCardSet.Count == 0)
@@ -366,19 +366,19 @@ public class CardManager : MonoBehaviour
         }
        
         switch(mode){
-            case GameMode.Smart:
+            case GameModeEnum.Smart:
                 nextCard = GetNextCardSmartMode(filteredCardSet);
             break;
             
-            case GameMode.Random:
+            case GameModeEnum.Random:
                 nextCard = GetNextCardRandomMode(filteredCardSet);
             break;
 
-            case GameMode.InOrder:
+            case GameModeEnum.InOrder:
                 nextCard = GetNextCardInOrderMode(filteredCardSet);
             break;
 
-            case GameMode.Hard:
+            case GameModeEnum.Hard:
                 nextCard = GetNextCardHardMode(filteredCardSet);
             break;
 
@@ -519,7 +519,7 @@ public class CardManager : MonoBehaviour
     {
         activeTags = tagButtonsManager.GetSelectedTags();
         PrepareFilteredCardSet();
-        currentCard = GetNextCard(currentGameMode);
+        currentCard = GetNextCard(currentGameModeEnum);
         cardUIManager.ShowCardWithoutAnim(currentCard);
         
         tagSettingsPopup.SetActive(false);
@@ -534,7 +534,7 @@ public class CardManager : MonoBehaviour
 
         currentCardSet.Remove(currentCard);
         filteredCardSet.Remove(currentCard);
-        currentCard = GetNextCard(currentGameMode);
+        currentCard = GetNextCard(currentGameModeEnum);
         cardUIManager.MoveCardRight(currentCard);
     }
 
