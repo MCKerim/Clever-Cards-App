@@ -2203,6 +2203,7 @@ Transform:
   - {fileID: 912169116}
   - {fileID: 211735433}
   - {fileID: 704814687}
+  - {fileID: 672201061}
   m_Father: {fileID: 0}
   m_RootOrder: 9
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -4991,6 +4992,54 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &672201060
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 672201061}
+  - component: {fileID: 672201062}
+  m_Layer: 0
+  m_Name: Query Mode
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &672201061
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 672201060}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 326254330}
+  m_RootOrder: 4
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &672201062
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 672201060}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d2a3a25b0b8afa047acf37829c7ab9a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  modeName: Query Mode
+  description: 
+  cardNumberHolder: {fileID: 2076484332}
+  cardNumberText: {fileID: 364171396}
 --- !u!1 &676385777
 GameObject:
   m_ObjectHideFlags: 0
@@ -14781,14 +14830,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   categories: []
-  cardUIManager: {fileID: 1157226844770924205}
-  uIManager: {fileID: 688669142}
-  currentModeText: {fileID: 951717543}
   modeObjects:
   - {fileID: 383418525}
   - {fileID: 912169117}
   - {fileID: 211735434}
   - {fileID: 704814688}
+  - {fileID: 672201062}
+  cardUIManager: {fileID: 1157226844770924205}
+  uIManager: {fileID: 688669142}
+  currentModeText: {fileID: 951717543}
   importErrorPanel: {fileID: 241661907}
   importErrorText: {fileID: 1685506639}
   createCardManager: {fileID: 237657841}

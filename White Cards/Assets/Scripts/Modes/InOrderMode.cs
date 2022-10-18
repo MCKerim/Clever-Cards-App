@@ -12,7 +12,6 @@ public class InOrderMode : Mode, IMode
     public void StartMode(){
         counter = 0;
         cardNumberHolder.SetActive(true);
-        cardNumberText.SetText("");
     }
 
     public List<Card> PrepareCardSet(List<Card> cardSet){

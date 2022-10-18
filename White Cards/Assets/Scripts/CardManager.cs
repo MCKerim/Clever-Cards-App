@@ -19,14 +19,15 @@ public class CardManager : MonoBehaviour
     private List<Card> filteredCardSet = new List<Card>();
 
     [SerializeField] private List<Category> categories;
+    [SerializeField] private List<Mode> modeObjects;
+    private List<IMode> modes;
 
     [SerializeField] private CardUIManager cardUIManager;
 
     [SerializeField] private UIManager uIManager;
 
     [SerializeField] private TextMeshProUGUI currentModeText;
-    public List<Mode> modeObjects;
-    private List<IMode> modes;
+    
     private int currentModeIndex = 0;
     private bool onlyFavorites;
     private bool filterCardsWithTags;
@@ -47,6 +48,18 @@ public class CardManager : MonoBehaviour
     [SerializeField] private Color toggleDeactiveColor;
 
     [SerializeField] private TextMeshProUGUI currentCategoryText;
+
+    private Category categorySelectedToDelete;
+    [SerializeField] private GameObject confirmCategoryDeletionPopup;
+    [SerializeField] private TextMeshProUGUI confirmCategoryDeletionText;
+    
+    [SerializeField] private GameObject createCategoryPopup;
+    [SerializeField] private TMP_InputField createCategoryPopupInputField;
+    [SerializeField] private ColorButtonsManager createCategoryColorSelection;
+    private Category currentEditedCategory = null;
+
+    public delegate void CategoryUpdateAction();
+    public static event CategoryUpdateAction OnCategorysChanged;
 
     // Start is called before the first frame update
     void Awake()
@@ -432,9 +445,6 @@ public class CardManager : MonoBehaviour
         categorySettingsPopup.SetActive(false);
     }
 
-    private Category categorySelectedToDelete;
-    [SerializeField] private GameObject confirmCategoryDeletionPopup;
-    [SerializeField] private TextMeshProUGUI confirmCategoryDeletionText;
     public void ShowConfirmDeleteCategoryPopup(Category category)
     {
         categorySelectedToDelete = category;
@@ -447,14 +457,6 @@ public class CardManager : MonoBehaviour
         categorySelectedToDelete = null;
         confirmCategoryDeletionPopup.SetActive(false);
     }
-
-    [SerializeField] private GameObject createCategoryPopup;
-    [SerializeField] private TMP_InputField createCategoryPopupInputField;
-    [SerializeField] private ColorButtonsManager createCategoryColorSelection;
-    private Category currentEditedCategory = null;
-
-    public delegate void CategoryUpdateAction();
-    public static event CategoryUpdateAction OnCategorysChanged;
 
     public void CreateCategoryButtonClicked()
     {
