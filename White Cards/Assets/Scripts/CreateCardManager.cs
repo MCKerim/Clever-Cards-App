@@ -15,7 +15,6 @@ public class CreateCardManager : MonoBehaviour
     [SerializeField] private TMP_InputField answearInputField;
     [SerializeField] private TMP_Dropdown categoryDropdown;
     [SerializeField] private TextMeshProUGUI categoryLabelText;
-    [SerializeField] private TMP_Dropdown tagsDropdown;
     [SerializeField] private TagButtonsManager tagButtonsManager;
     [SerializeField] private GameObject createTagPopup;
     [SerializeField] private GameObject tagPanel;
@@ -241,7 +240,7 @@ public class CreateCardManager : MonoBehaviour
 
         Category selectedCategory = categories[categoryDropdown.value];
         selectedCategory.AddTag(newTag);
-        cardManager.SaveCategories();
+        FileManager.SaveCategories(categories);
 
         tagButtonsManager.AddTag(newTag);
 

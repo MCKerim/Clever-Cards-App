@@ -2,6 +2,7 @@ using System.Collections.Generic;
 
 public interface IMode
 {
+    public string GetName();
     public void StartMode();
 
     public List<Card> PrepareCardSet(List<Card> cardSet);

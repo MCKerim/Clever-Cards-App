@@ -24,8 +24,10 @@ public class CardManager : MonoBehaviour
 
     [SerializeField] private UIManager uIManager;
 
-    [SerializeField] private TextMeshProUGUI currentGameModeEnumText;
-    private GameModeEnum currentGameModeEnum;
+    [SerializeField] private TextMeshProUGUI currentModeText;
+    public List<Mode> modeObjects;
+    private List<IMode> modes;
+    private int currentModeIndex = 0;
     private bool onlyFavorites;
     private bool filterCardsWithTags;
     private List<Tag> activeTags = new List<Tag>();
@@ -49,10 +51,16 @@ public class CardManager : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        categories = LoadCategoriesFromFile();
+        categories = FileManager.LoadCategoriesFromFile();
 
-        currentGameModeEnum = GameModeEnum.Smart;
-        currentGameModeEnumText.SetText(currentGameModeEnum + " Mode");
+        modes = new List<IMode>();
+        foreach(Mode m in modeObjects){
+            modes.Add((IMode) m);
+        }
+
+        currentModeIndex = 0;
+        currentModeText.SetText(modes[currentModeIndex].GetName());
+        modes[currentModeIndex].StartMode();
     }
 
     public void SelectCategory(Category category)
@@ -62,10 +70,10 @@ public class CardManager : MonoBehaviour
 
         currentCategory = category;
         currentCategoryText.SetText(currentCategory.Name);
-        currentCardSet = LoadCardsOfCategoryFromFile(currentCategory);
+        currentCardSet = FileManager.LoadCardsOfCategoryFromFile(currentCategory);
 
         PrepareFilteredCardSet();
-        currentCard = GetNextCard(currentGameModeEnum);
+        currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.ShowFirstCard(currentCard);
     }
 
@@ -76,7 +84,7 @@ public class CardManager : MonoBehaviour
             c.CurrentPoints = CardBuilder.startpointsForCard;
         }
         PrepareFilteredCardSet();
-        currentCard = GetNextCard(currentGameModeEnum);
+        currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.ShowCardWithoutAnim(currentCard);
     }
 
@@ -87,15 +95,15 @@ public class CardManager : MonoBehaviour
             return;
         }
 
-        if(currentGameModeEnum == GameModeEnum.Smart || currentGameModeEnum == GameModeEnum.Hard){
+        if(modes[currentModeIndex].GetName().Equals("Smart Mode") || modes[currentModeIndex].GetName().Equals("Hard Mode")){
             RateCard(-10, currentCard);
-            if(currentGameModeEnum == GameModeEnum.Hard && currentCard.CurrentPoints < 70)
+            if(modes[currentModeIndex].GetName().Equals("Hard Mode") && currentCard.CurrentPoints < 70)
             {
                 filteredCardSet.Remove(currentCard);
             }
         }
 
-        currentCard = GetNextCard(currentGameModeEnum);
+        currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.MoveCardLeft(currentCard);
     }
 
@@ -106,11 +114,11 @@ public class CardManager : MonoBehaviour
             return;
         }
 
-        if(currentGameModeEnum == GameModeEnum.Smart || currentGameModeEnum == GameModeEnum.Hard){
+        if(modes[currentModeIndex].GetName().Equals("Smart Mode") || modes[currentModeIndex].GetName().Equals("Hard Mode")){
             RateCard(0, currentCard);
         }
 
-        currentCard = GetNextCard(currentGameModeEnum);
+        currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.MoveCardDown(currentCard);
     }
 
@@ -121,11 +129,11 @@ public class CardManager : MonoBehaviour
             return;
         }
 
-        if(currentGameModeEnum == GameModeEnum.Smart || currentGameModeEnum == GameModeEnum.Hard){
+        if(modes[currentModeIndex].GetName().Equals("Smart Mode") || modes[currentModeIndex].GetName().Equals("Hard Mode")){
             RateCard(10, currentCard);
         }
         
-        currentCard = GetNextCard(currentGameModeEnum);
+        currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.MoveCardRight(currentCard);
     }
 
@@ -177,7 +185,7 @@ public class CardManager : MonoBehaviour
         }
 
         PrepareFilteredCardSet();
-        currentCard = GetNextCard(currentGameModeEnum);
+        currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.ShowCardWithoutAnim(currentCard);
     }
 
@@ -197,58 +205,41 @@ public class CardManager : MonoBehaviour
         }
 
         PrepareFilteredCardSet();
-        currentCard = GetNextCard(currentGameModeEnum);
+        currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.ShowCardWithoutAnim(currentCard);
     }
 
-    public void PreviousGameModeEnum()
+    public void NextMode()
     {
-        GameModeEnum[] GameModeEnums = (GameModeEnum[])Enum.GetValues(typeof(GameModeEnum));
+        modes[currentModeIndex].EndMode();
 
-        int currentEnumValue = (int) currentGameModeEnum;
-        currentEnumValue--;
-        if(currentEnumValue < 0){
-            currentEnumValue = GameModeEnums.Length-1;
+        currentModeIndex++;
+        if(currentModeIndex >= modes.Count){
+            currentModeIndex = 0;
         }
 
-        SelectGameModeEnum((GameModeEnum) currentEnumValue);
-
-        currentCard = GetNextCard(currentGameModeEnum);
-        cardUIManager.ShowCardWithoutAnim(currentCard);
-    }
-
-    public void NextGameModeEnum()
-    {
-        GameModeEnum[] GameModeEnums = (GameModeEnum[])Enum.GetValues(typeof(GameModeEnum));
-
-        int currentEnumValue = (int) currentGameModeEnum;
-        currentEnumValue++;
-        if(currentEnumValue >= GameModeEnums.Length){
-            currentEnumValue = 0;
-        }
-
-        SelectGameModeEnum((GameModeEnum) currentEnumValue);
-
-        currentCard = GetNextCard(currentGameModeEnum);
-        cardUIManager.ShowCardWithoutAnim(currentCard);
-    }
-
-    private void SelectGameModeEnum(GameModeEnum GameModeEnum)
-    {
-        currentGameModeEnum = GameModeEnum;
-        currentGameModeEnumText.SetText(currentGameModeEnum + " Mode");
-        
-        if(GameModeEnum == GameModeEnum.InOrder){
-            counterForInOrderMode = 0;
-            cardNumberHolder.SetActive(true);
-            cardNumberText.SetText(0 + " / " + currentCardSet.Count);
-        }
-        else
-        {
-            cardNumberHolder.SetActive(false);
-        }
+        modes[currentModeIndex].StartMode();
+        currentModeText.SetText(modes[currentModeIndex].GetName());
         PrepareFilteredCardSet();
-        currentCard = GetNextCard(currentGameModeEnum);
+
+        currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
+        cardUIManager.ShowCardWithoutAnim(currentCard);
+    }
+
+    public void PreviousMode()
+    {
+        modes[currentModeIndex].EndMode();
+
+        currentModeIndex--;
+        if(currentModeIndex < 0){
+            currentModeIndex = modes.Count-1;
+        }
+
+        modes[currentModeIndex].StartMode();
+        currentModeText.SetText(modes[currentModeIndex].GetName());
+        PrepareFilteredCardSet();
+
+        currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.ShowCardWithoutAnim(currentCard);
     }
 
@@ -267,7 +258,7 @@ public class CardManager : MonoBehaviour
             filteredCardSet = FilterCardSetTags(filteredCardSet, activeTags);
         }
 
-        filteredCardSet = FilterCardSetGameModeEnum(filteredCardSet, currentGameModeEnum);
+        filteredCardSet = modes[currentModeIndex].PrepareCardSet(filteredCardSet);
     }
 
     public void CurrentCardFavoriteStatusWasUpdated()
@@ -329,27 +320,8 @@ public class CardManager : MonoBehaviour
         return onlyCardsWithTag;
     }
 
-    private List<Card> FilterCardSetGameModeEnum(List<Card> cardSetToFilter, GameModeEnum mode)
+    public Card GetNextCard()
     {
-        switch (mode){
-            case GameModeEnum.Hard:
-                List<Card> onlyHardCards = new List<Card>();
-                foreach (Card c in cardSetToFilter)
-                {
-                    if (c.CurrentPoints >= 70)
-                    {
-                        onlyHardCards.Add(c);
-                    }
-                }
-                return onlyHardCards;
-            default:
-                    return cardSetToFilter;
-        }
-    }
-
-    public Card GetNextCard(GameModeEnum mode)
-    {
-        Card nextCard = null;
         if(currentCardSet.Count == 0)
         {
             return null;
@@ -364,127 +336,9 @@ public class CardManager : MonoBehaviour
                 return CardBuilder.InfoCard("There are no cards with these tags in this category.", "Please select other tags.");
             }
         }
-       
-        switch(mode){
-            case GameModeEnum.Smart:
-                nextCard = GetNextCardSmartMode(filteredCardSet);
-            break;
-            
-            case GameModeEnum.Random:
-                nextCard = GetNextCardRandomMode(filteredCardSet);
-            break;
 
-            case GameModeEnum.InOrder:
-                nextCard = GetNextCardInOrderMode(filteredCardSet);
-            break;
-
-            case GameModeEnum.Hard:
-                nextCard = GetNextCardHardMode(filteredCardSet);
-            break;
-
-            default:
-                Debug.LogError("Game Mode not implemented.");
-            break;
-        }
-        return nextCard;
+        return modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
     }
-
-    int counterForInOrderMode = 0;
-    private Card GetNextCardInOrderMode(List<Card> cardSet)
-    {
-        if(cardSet.Count == 0){
-            return null;
-        }
-
-        if(counterForInOrderMode >= cardSet.Count)
-        {
-            counterForInOrderMode = 0;
-        }
-
-        Card nextCard = cardSet[counterForInOrderMode];
-        cardNumberText.SetText(counterForInOrderMode+1 + " / " + cardSet.Count);
-
-        counterForInOrderMode++;
-        return nextCard;
-    }
-
-    private Card GetNextCardRandomMode(List<Card> cardSet)
-    {
-        if(cardSet.Count == 0){
-            return null;
-        }
-
-        return GetDifferentRandomCardFromList(cardSet);
-    }
-
-    private Card GetNextCardHardMode(List<Card> cardSet)
-    {
-        if(cardSet.Count == 0){
-            return CardBuilder.InfoCard("There are no 'HARD' rated cards in this category.", "Please choose another mode.");
-        }
-
-        return GetDifferentRandomCardFromList(cardSet);
-    }
-
-    private Card GetDifferentRandomCardFromList(List<Card> cards)
-    {
-        if(cards.Count == 0){
-            return null;
-        }
-
-        Card nextCard;
-        do{
-            nextCard = GetRandomCardFromList(cards);
-        }while(nextCard.Equals(currentCard) && cards.Count > 1);
-
-        return nextCard;
-    }
-
-    private Card GetRandomCardFromList(List<Card> cards)
-    {
-        if(cards.Count == 0)
-        {
-            return null;
-        }
-        int randomIndex = UnityEngine.Random.Range(0, cards.Count);
-        return cards[randomIndex];
-    }
-
-    private Card GetNextCardSmartMode(List<Card> cardSet)
-    {
-        if(cardSet.Count == 0){
-            return null;
-        }
-        Card nextCard;
-        do{
-            nextCard = GetRandomCardFromListBasedOfChance(cardSet);
-        }while (nextCard.Equals(currentCard) && cardSet.Count > 1);
-        return nextCard;
-    }
-
-    private Card GetRandomCardFromListBasedOfChance(List<Card> cardSet)
-    {
-        int sum = SumPoints(cardSet);
-        int randomChance = UnityEngine.Random.Range(0, sum);
-
-        float currentChance = 0;
-        foreach (Card c in cardSet)
-        {
-            currentChance += c.CurrentPoints;
-            if (currentChance >= randomChance)
-            {
-                return c;
-            }
-        }
-        return null;
-    }
-
-    private int SumPoints(List<Card> cardSet)
-    {
-        int sum = 0;
-        cardSet.ForEach(c => sum += c.CurrentPoints);
-        return sum;
-    } 
 
     public void AddCardToCurrentCategory(Card newCard)
     {
@@ -495,9 +349,9 @@ public class CardManager : MonoBehaviour
 
     public void SaveCard(Card card, Category category)
     {
-        List<Card> cardsOfCategory =  LoadCardsOfCategoryFromFile(category);
+        List<Card> cardsOfCategory =  FileManager.LoadCardsOfCategoryFromFile(category);
         cardsOfCategory.Add(card);
-        SaveCardsOfCategory(category, cardsOfCategory);
+        FileManager.SaveCardsOfCategory(category, cardsOfCategory);
     }
 
     public void DeleteTagFromCurrentCategory(Tag tag)
@@ -519,7 +373,7 @@ public class CardManager : MonoBehaviour
     {
         activeTags = tagButtonsManager.GetSelectedTags();
         PrepareFilteredCardSet();
-        currentCard = GetNextCard(currentGameModeEnum);
+        currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.ShowCardWithoutAnim(currentCard);
         
         tagSettingsPopup.SetActive(false);
@@ -534,7 +388,7 @@ public class CardManager : MonoBehaviour
 
         currentCardSet.Remove(currentCard);
         filteredCardSet.Remove(currentCard);
-        currentCard = GetNextCard(currentGameModeEnum);
+        currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.MoveCardRight(currentCard);
     }
 
@@ -565,7 +419,7 @@ public class CardManager : MonoBehaviour
     public void SaveCategory(Category newCategory)
     {
         categories.Add(newCategory);
-        SaveCategories();
+        FileManager.SaveCategories(categories);
     }
 
     public void ShowCategorySettingsPopup()
@@ -597,8 +451,6 @@ public class CardManager : MonoBehaviour
     [SerializeField] private GameObject createCategoryPopup;
     [SerializeField] private TMP_InputField createCategoryPopupInputField;
     [SerializeField] private ColorButtonsManager createCategoryColorSelection;
-    [SerializeField] private GameObject cardNumberHolder;
-    [SerializeField] private TextMeshProUGUI cardNumberText;
     private Category currentEditedCategory = null;
 
     public delegate void CategoryUpdateAction();
@@ -634,7 +486,7 @@ public class CardManager : MonoBehaviour
         {
             currentEditedCategory.Name = categoryName;
             currentEditedCategory.Color = createCategoryColorSelection.GetSelectedColor();
-            SaveCategories();
+            FileManager.SaveCategories(categories);
             currentEditedCategory = null;
         }
         
@@ -670,7 +522,7 @@ public class CardManager : MonoBehaviour
         {
             Debug.LogException(ex);
         }
-        SaveCategories();
+        FileManager.SaveCategories(categories);
         GameObject.FindObjectOfType<CategoryUIManager>().UpdateCategoryUI();
         HideConfirmDeleteCategoryPopup();
     }
@@ -690,102 +542,11 @@ public class CardManager : MonoBehaviour
 
     public void SaveCurrentCardSet(){
         if(currentCategory != null && currentCardSet != null){
-            SaveCardsOfCategory(currentCategory, currentCardSet);
+            FileManager.SaveCardsOfCategory(currentCategory, currentCardSet);
         }
     }
 
-    public void SaveCategories(){
-        BinaryFormatter formatter = new BinaryFormatter();
-
-        string path = Application.persistentDataPath + "/categories.MCKerimData";
-        FileStream stream = new FileStream(path, FileMode.Create);
-
-        CategoriesData categoriesData = new CategoriesData(categories);
-
-        formatter.Serialize(stream, categoriesData);
-        stream.Close();
-        Debug.Log("Categories Saved in: " + path);
-    }
-
-    private void SaveCardsOfCategory(Category category, List<Card> cards){
-        BinaryFormatter formatter = new BinaryFormatter();
-
-        string path = Application.persistentDataPath + "/" + category.Uuid + ".MCKerimData";
-        FileStream stream = new FileStream(path, FileMode.Create);
-
-        CardsFromCategoryData cardsFromCategoryData = new CardsFromCategoryData(cards);
-
-        formatter.Serialize(stream, cardsFromCategoryData);
-        stream.Close();
-        Debug.Log("Cards Saved in: " + path);
-    }
-
-    public List<Category> LoadCategoriesFromFile()
-    {
-        string path = Application.persistentDataPath + "/categories.MCKerimData";
-        if (File.Exists(path))
-        {
-            BinaryFormatter formatter = new BinaryFormatter();
-            FileStream stream = new FileStream(path, FileMode.Open);
-
-            CategoriesData categoriesData = formatter.Deserialize(stream) as CategoriesData;
-
-            stream.Close();
-            Debug.Log("Save File Found in: " + path);
-            return categoriesData.categories;
-        }
-        else
-        {
-            Debug.Log("Save File not found in " + path);
-            List<Category> categories = new List<Category>();
-            return categories;
-        }
-    }
-
-    public List<Card> LoadCardsOfCategoryFromFile(Category category)
-    {
-        string path = Application.persistentDataPath + "/" + category.Uuid + ".MCKerimData";
-        if (File.Exists(path))
-        {
-            BinaryFormatter formatter = new BinaryFormatter();
-            FileStream stream = new FileStream(path, FileMode.Open);
-
-            CardsFromCategoryData cardsFromCategoryData = formatter.Deserialize(stream) as CardsFromCategoryData;
-
-            stream.Close();
-            Debug.Log("Save File Found in: " + path);
-            return cardsFromCategoryData.cards;
-        }
-        else
-        {
-            Debug.Log("Save File not found in " + path);
-            List<Card> cards = new List<Card>();
-            return cards;
-        }
-    }
-
-    public void ShareCategory(Category category)
-    {
-        BinaryFormatter formatter = new BinaryFormatter();
-
-        string path = Application.persistentDataPath + "/" + category.Name + ".txt";
-        FileStream stream = new FileStream(path, FileMode.Create);
-
-        ShareableCategoryData shareableCategoryData = new ShareableCategoryData(category, LoadCardsOfCategoryFromFile(category));
-
-        formatter.Serialize(stream, shareableCategoryData);
-        stream.Close();
-
-        new NativeShare().AddFile( path )
-		.SetSubject( category.Name + " Category" ).SetText( "Import this file in the White Cards App to start learning!" ).SetUrl( "https://MCKerim.com" )
-		.SetCallback( ( result, shareTarget ) => 
-        {
-            Debug.Log("Share result: " + result + ", selected app: " + shareTarget);
-            File.Delete(path); 
-        })
-		.Share();
-    }
-
+    ////////////////Sharable Category Code
     internal void PermissionCallbacks_PermissionDeniedAndDontAskAgain(string permissionName)
     {
         importErrorPanel.SetActive(true);
@@ -870,7 +631,7 @@ public class CardManager : MonoBehaviour
                 Card sharebleCard = CardBuilder.CopyCardToShare(c, sharebleCategory.Uuid);
                 sharebleCards.Add(sharebleCard);
             }
-            SaveCardsOfCategory(sharebleCategory, sharebleCards);
+            FileManager.SaveCardsOfCategory(sharebleCategory, sharebleCards);
             GameObject.FindObjectOfType<CategoryUIManager>().UpdateCategoryUI();
         }
         else
@@ -887,35 +648,3 @@ public class CardManager : MonoBehaviour
     }
 }
 
-[System.Serializable]
-public class CategoriesData
-{
-    public List<Category> categories;
-
-    public CategoriesData(List<Category> categories)
-    {
-        this.categories = categories;
-    }
-}
-
-[System.Serializable]
-public class CardsFromCategoryData
-{
-    public List<Card> cards;
-
-    public CardsFromCategoryData(List<Card> cards){
-        this.cards = cards;
-    }
-}
-
-[System.Serializable]
-public class ShareableCategoryData
-{
-    public Category category;
-    public List<Card> cards;
-
-    public ShareableCategoryData(Category category, List<Card> cards){
-        this.category = category;
-        this.cards = cards;
-    }
-}

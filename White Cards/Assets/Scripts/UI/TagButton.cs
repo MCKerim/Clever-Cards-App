@@ -9,7 +9,7 @@ public class TagButton : MonoBehaviour
     [SerializeField] private GameObject selectedImage;
     private TagButtonsManager tagButtonsManager;
 
-    private Tag tag;
+    private new Tag tag;
     private bool isSelected;
 
     public Tag Tag { get => tag; }

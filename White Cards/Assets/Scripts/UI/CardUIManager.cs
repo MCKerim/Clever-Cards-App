@@ -22,7 +22,7 @@ public class CardUIManager : MonoBehaviour
     [SerializeField] private Sprite isFavoriteSprite;
     [SerializeField] private Sprite isNotFavoriteSprite;
 
-    private CardManager cardManager;
+    [SerializeField] private CardManager cardManager;
 
     private Card currentCard;
 
@@ -31,10 +31,6 @@ public class CardUIManager : MonoBehaviour
     private Vector3 startPos;
     private void OnEnable() {
         startPos = transform.localPosition;
-    }
-
-    private void Start() {
-        cardManager = GameObject.FindObjectOfType<CardManager>();
     }
 
     public void ShowCardWithoutAnim(Card card)

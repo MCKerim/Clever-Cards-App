@@ -41,6 +41,6 @@ public class CategoryButtonManager : MonoBehaviour
 
     public void ShareThisCategory()
     {
-        cardManager.ShareCategory(category);
+        FileManager.ShareCategory(category);
     }
 }

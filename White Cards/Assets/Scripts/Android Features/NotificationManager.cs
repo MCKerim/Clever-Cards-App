@@ -76,7 +76,7 @@ public class NotificationManager : MonoBehaviour
             Category randomCategory = categorys[Random.Range(0, categorys.Count)];
             notification.Title = randomCategory.Name;
 
-            List<Card> cards = cardManager.LoadCardsOfCategoryFromFile(randomCategory);
+            List<Card> cards = FileManager.LoadCardsOfCategoryFromFile(randomCategory);
             if(cards.Count > 0)
             {
                 Card randomCard = cards[Random.Range(0, cards.Count)];
