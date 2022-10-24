@@ -12,6 +12,7 @@ using UnityEngine.UI;
 
 public class CardManager : MonoBehaviour
 {
+    private Card lastCard;
     private Card currentCard;
     private Category currentCategory;
 
@@ -86,6 +87,7 @@ public class CardManager : MonoBehaviour
         currentCardSet = FileManager.LoadCardsOfCategoryFromFile(currentCategory);
 
         PrepareFilteredCardSet();
+        lastCard = null;
         currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.ShowFirstCard(currentCard);
     }
@@ -97,8 +99,22 @@ public class CardManager : MonoBehaviour
             c.CurrentPoints = CardBuilder.startpointsForCard;
         }
         PrepareFilteredCardSet();
+        lastCard = null;
         currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.ShowCardWithoutAnim(currentCard);
+    }
+
+    public void ShowLastCard(){
+        if(currentCard == null || lastCard == null)
+        {
+            return;
+        }
+
+        Card temp = currentCard;
+        currentCard = lastCard;
+        lastCard = temp;
+
+        cardUIManager.MoveCardUp(currentCard);
     }
 
     public void RateCardEasy()
@@ -116,6 +132,7 @@ public class CardManager : MonoBehaviour
             }
         }
 
+        lastCard = currentCard;
         currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.MoveCardLeft(currentCard);
     }
@@ -131,6 +148,7 @@ public class CardManager : MonoBehaviour
             RateCard(0, currentCard);
         }
 
+        lastCard = currentCard;
         currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.MoveCardDown(currentCard);
     }
@@ -146,6 +164,7 @@ public class CardManager : MonoBehaviour
             RateCard(10, currentCard);
         }
         
+        lastCard = currentCard;
         currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.MoveCardRight(currentCard);
     }
@@ -198,6 +217,7 @@ public class CardManager : MonoBehaviour
         }
 
         PrepareFilteredCardSet();
+        lastCard = null;
         currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.ShowCardWithoutAnim(currentCard);
     }
@@ -218,6 +238,7 @@ public class CardManager : MonoBehaviour
         }
 
         PrepareFilteredCardSet();
+        lastCard = null;
         currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.ShowCardWithoutAnim(currentCard);
     }
@@ -234,7 +255,7 @@ public class CardManager : MonoBehaviour
         modes[currentModeIndex].StartMode();
         currentModeText.SetText(modes[currentModeIndex].GetName());
         PrepareFilteredCardSet();
-
+        lastCard = null;
         currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.ShowCardWithoutAnim(currentCard);
     }
@@ -251,7 +272,7 @@ public class CardManager : MonoBehaviour
         modes[currentModeIndex].StartMode();
         currentModeText.SetText(modes[currentModeIndex].GetName());
         PrepareFilteredCardSet();
-
+        lastCard = null;
         currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.ShowCardWithoutAnim(currentCard);
     }
@@ -357,7 +378,10 @@ public class CardManager : MonoBehaviour
     {
         currentCardSet.Add(newCard);
         PrepareFilteredCardSet();
-        SetCurrentCard(newCard);
+        
+        lastCard = currentCard;
+        currentCard = newCard;
+        UpdateCurrentCardUI();
     }
 
     public void SaveCard(Card card, Category category)
@@ -386,6 +410,7 @@ public class CardManager : MonoBehaviour
     {
         activeTags = tagButtonsManager.GetSelectedTags();
         PrepareFilteredCardSet();
+        lastCard = null;
         currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.ShowCardWithoutAnim(currentCard);
         
@@ -401,14 +426,13 @@ public class CardManager : MonoBehaviour
 
         currentCardSet.Remove(currentCard);
         filteredCardSet.Remove(currentCard);
+
+        if(currentCard.Equals(lastCard)){
+            lastCard = null;
+        }
+
         currentCard = modes[currentModeIndex].GetCard(filteredCardSet, currentCard);
         cardUIManager.MoveCardRight(currentCard);
-    }
-
-    public void SetCurrentCard(Card card)
-    {
-        currentCard = card;
-        UpdateCurrentCardUI();
     }
 
     public void UpdateCurrentCardUI()

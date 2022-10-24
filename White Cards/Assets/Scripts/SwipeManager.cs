@@ -117,6 +117,10 @@ public class SwipeManager : MonoBehaviour
         {
             cardManager.RateCardMedium();
         }
+        else if(Vector2.Dot(Vector2.up, dir) > swipeTreshold)
+        {
+            cardManager.ShowLastCard();
+        }
     }
 
     private void UpdateTouchArea()

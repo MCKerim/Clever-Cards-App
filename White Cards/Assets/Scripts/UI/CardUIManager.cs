@@ -10,9 +10,10 @@ public class CardUIManager : MonoBehaviour
     [SerializeField] private TextMeshProUGUI currentPointsText;
 
     [SerializeField] private Image hardnesBar;
-    [SerializeField] private Color easyColor;
-    [SerializeField] private Color mediumColor;
-    [SerializeField] private Color hardColor;
+    [SerializeField] private Color leftColor;
+    [SerializeField] private Color downColor;
+    [SerializeField] private Color rightColor;
+    [SerializeField] private Color upColor;
 
     [SerializeField] private RawImage questionRawImage;
     [SerializeField] private TMP_InputField notesInputField;
@@ -68,22 +69,30 @@ public class CardUIManager : MonoBehaviour
     {
         currentCard = card;
         LeanTween.moveLocalX(gameObject, -1000, 0.25f).setOnComplete(MoveCardBackToMiddel);
-        PlayRateCardEffect(easyColor);
+        PlayRateCardEffect(leftColor);
     }
 
     public void MoveCardRight(Card card)
     {
         currentCard = card;
         LeanTween.moveLocalX(gameObject, 1000, 0.25f).setOnComplete(MoveCardBackToMiddel);
-        PlayRateCardEffect(hardColor);
+        PlayRateCardEffect(rightColor);
     }
 
     public void MoveCardDown(Card card)
     {
         currentCard = card;
         LeanTween.moveLocalY(gameObject, -1500, 0.25f).setOnComplete(MoveCardBackToMiddel);
-        PlayRateCardEffect(mediumColor);
+        PlayRateCardEffect(downColor);
     }
+
+    public void MoveCardUp(Card card)
+    {
+        currentCard = card;
+        LeanTween.moveLocalY(gameObject, 1500, 0.25f).setOnComplete(MoveCardBackToMiddel);
+        PlayRateCardEffect(upColor);
+    }
+
     [SerializeField] AnimationCurve cardAnimCurve;
 
     private void MoveCardBackToMiddel()
@@ -107,15 +116,15 @@ public class CardUIManager : MonoBehaviour
         currentPointsText.SetText("Points: " + currentCard.CurrentPoints);
         if (currentCard.CurrentPoints >= 70)
         {
-            hardnesBar.color = hardColor;
+            hardnesBar.color = rightColor;
         }
         else if (currentCard.CurrentPoints >= 30)
         {
-            hardnesBar.color = mediumColor;
+            hardnesBar.color = downColor;
         }
         else
         {
-            hardnesBar.color = easyColor;
+            hardnesBar.color = leftColor;
         }
     }
 
